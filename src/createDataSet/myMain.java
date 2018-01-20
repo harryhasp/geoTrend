@@ -18,7 +18,7 @@ public class myMain {
                 "#intel", "#hadoop", "#spark", "#splunk", "#olympiakos", "#legend", "#gate7", "#osfp", "#printezis",
                 "#alba", "#asus"} ;
 
-        for (int i = 0 ; i < 10000 ; i++) {
+        for (int i = 0 ; i < 100 ; i++) {
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             //System.out.println(timestamp.getTime());
