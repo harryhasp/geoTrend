@@ -18,6 +18,7 @@ public class myMain {
         double upLimit = 90.0 ;
 
 
+        // Create the sample file for initial index sharping
         File fout1 = new File("C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\sampleData.txt") ;
         FileOutputStream fos1 = new FileOutputStream(fout1) ;
 
@@ -61,6 +62,7 @@ public class myMain {
 
         bw1.close();
 
+        // Create our real data
         File fout2 = new File("C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\newData.txt") ;
         FileOutputStream fos2 = new FileOutputStream(fout2) ;
 
