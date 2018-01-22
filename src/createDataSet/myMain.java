@@ -19,12 +19,13 @@ public class myMain {
 
 
         // Create the sample file for initial index sharping
-        File fout1 = new File("C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\sampleData.txt") ;
+        //File fout1 = new File("C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\sampleData.txt") ;
+        File fout1 = new File("C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\smallData.txt") ;
         FileOutputStream fos1 = new FileOutputStream(fout1) ;
 
         BufferedWriter bw1 = new BufferedWriter(new OutputStreamWriter(fos1));
 
-        for (int i = 0 ; i < 100 ; i++) {
+        for (int i = 0 ; i < 10 ; i++) {
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             //System.out.println(timestamp.getTime());
@@ -62,6 +63,7 @@ public class myMain {
 
         bw1.close();
 
+        /*
         // Create our real data
         File fout2 = new File("C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\newData.txt") ;
         FileOutputStream fos2 = new FileOutputStream(fout2) ;
@@ -104,6 +106,7 @@ public class myMain {
         }
 
         bw2.close();
+        */
 
         System.out.println("Finish") ;
     }
