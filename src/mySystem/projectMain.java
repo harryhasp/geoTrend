@@ -7,8 +7,10 @@ public class projectMain {
         String sampleDataFile = "C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\smallData.txt" ;
         String newDdataFile = "" ;
 
+        myGeoTrend geoTrend = new myGeoTrend() ;
+
         indexShapingClass indexShape = new indexShapingClass() ;
-        indexShape.indexShaping(sampleDataFile) ;
+        indexShape.indexShaping(geoTrend, sampleDataFile) ;
     }
 
 }
