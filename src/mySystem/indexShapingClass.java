@@ -28,8 +28,8 @@ public class indexShapingClass {
 
                 if (hashC.containsKey(keyword)) {
                     System.out.println("--> We have it already") ;
-                    //hashValue temp_hashValue = hashC.get(keyword) ;
-                    //temp_hashValue.counterN++ ;
+                    hashValue temp_hashValue = hashC.get(keyword) ;
+                    (temp_hashValue.countersN)[0]++ ;
                 }
                 else {
                     hashValue temp_hashValue = new hashValue() ;
@@ -38,6 +38,7 @@ public class indexShapingClass {
             }
             fileReader.close();
 
+            // check hash data
             Set<String> keys = hashC.keySet();
             for(String key: keys){
                 hashValue temp_hashValue = hashC.get(key) ;
