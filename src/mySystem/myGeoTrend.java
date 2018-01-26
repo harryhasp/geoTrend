@@ -2,22 +2,20 @@ package mySystem;
 
 public class myGeoTrend {
 
-    myLevel[] myLevels ;
     int depth ;
+    myCell firstCell ;
 
     myGeoTrend() {
-        (this.myLevels)[0] = new myLevel(0) ;
-        this.depth = 0 ;
+        this.depth = 1 ;
+        this.firstCell = new myCell(-180.0, 180.0, -90.0, 90.0, 0) ;
     }
 
-    public void newKeyword (String keyword) {
+    public void newKeyword (String keyword, myPoint point, long timestamp) {
+        int ret ;
 
+        ret = firstCell.addKeyword(keyword, point, timestamp) ;
+
+        System.out.println("ret = " + ret) ;
     }
-
-    void addNewLevel(int depth, int parentNumber) {
-
-    }
-
-
 
 }

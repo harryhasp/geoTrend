@@ -24,8 +24,12 @@ public class indexShapingClass {
                 System.out.println() ;
 
                 String keyword = (lineList.get(3)).substring(1) ;
+                //double longitude = Double.parseDouble(lineList.get(1)) ;
+                //double latitude = Double.parseDouble(lineList.get(2)) ;
+                myPoint newPoint = new myPoint(Double.parseDouble(lineList.get(1)), Double.parseDouble(lineList.get(2))) ;
+                long timestamp = Long.parseLong(lineList.get(0)) ;
 
-                geoTrend.newKeyword(keyword) ;
+                geoTrend.newKeyword(keyword, newPoint, timestamp) ;
             }
             fileReader.close();
             /*

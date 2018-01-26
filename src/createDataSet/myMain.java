@@ -12,10 +12,14 @@ public class myMain {
         String[] myWords = {"#apple", "#big", "#cat", "#dog", "#bus", "#lion", "#microsoft", "#tinder", "#amazon",
                 "#intel", "#hadoop", "#spark", "#splunk", "#olympiakos", "#legend", "#gate7", "#osfp", "#printezis",
                 "#alba", "#asus"} ;
-        double leftLimit = -180.0 ;
+        //double leftLimit = -180.0 ;
+        double leftLimit = 0.0 ;
         double rightLimit = 180.0 ;
-        double downLimit = -90.0 ;
+        //double downLimit = -90.0 ;
+        double downLimit = 0.0 ;
         double upLimit = 90.0 ;
+
+        long timer = 0 ;
 
 
         // Create the sample file for initial index sharping
@@ -27,9 +31,15 @@ public class myMain {
 
         for (int i = 0 ; i < 10 ; i++) {
 
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            // real timer
+            //Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             //System.out.println(timestamp.getTime());
-            bw1.write(Long.toString(timestamp.getTime()) + ",") ;
+            //bw1.write(Long.toString(timestamp.getTime()) + ",") ;
+
+            bw1.write((Long.toString(timer)) + ",") ;
+            if ( (i != 0) && (i % 2 != 0) ) {
+                timer++ ;
+            }
 
             double x = ThreadLocalRandom.current().nextDouble(leftLimit, rightLimit) ;
             //double x = ThreadLocalRandom.current().nextDouble(rightLimit - leftLimit) + leftLimit ;
