@@ -6,6 +6,7 @@ public class hashValue {
 
     int[] countersN ;
     int tRrend ;
+    myPoint location ;
 
     hashValue() {
         this.countersN = new int[n] ;
@@ -13,6 +14,7 @@ public class hashValue {
             (this.countersN)[i] = 0 ;
         }
         this.tRrend = tRrend ;
+        this.location = new myPoint(Double.MAX_VALUE, Double.MAX_VALUE) ;
     }
 
 }
