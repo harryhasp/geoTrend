@@ -7,6 +7,7 @@ public class hashValue {
     int[] countersN ;
     int tRrend ;
     myPoint location ;
+    // list of lists for locations. First list size of n (T/N)
 
     hashValue() {
         this.countersN = new int[n] ;
