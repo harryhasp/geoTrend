@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class myCell {
 
-    //int maxCapacity ;
+    int maxCapacity ;
     int curCapacity ;
     int curK ;
     mbr mbr ;
@@ -16,7 +16,7 @@ public class myCell {
 
     myCell(double minX, double maxX, double minY, double maxY, int level, int k) {
         System.out.println("myCell init - level = " + level) ;
-        //this.maxCapacity = 4 ;
+        this.maxCapacity = 4 ;
         this.curCapacity = 0 ;
         this.mbr = new mbr(minX, maxX, minY, maxY) ;
         this.hashC = new Hashtable<>() ;
@@ -39,21 +39,24 @@ public class myCell {
 
     // TO DO : store timestamp, now zero everywhere
     int addKeyword (String keyword, myPoint point, long timestamp) {
-        this.curCapacity++ ;
+        //this.curCapacity++ ;
 
-        // check if already exists there or not
-        // TO DO: go down to update all the counters
-        if (hashC.containsKey(keyword)) {
-            System.out.println("--> We have it already: " + keyword) ;
-            hashValue temp_hashValue = hashC.get(keyword) ;
-            (temp_hashValue.countersN)[0]++ ;
-        }
-        else if (this.curK+1 <= this.k) {
-            System.out.println("--> We add '" + keyword + "' to level " + this.level) ;
-            this.curK++ ;
-            hashValue temp_hashValue = new hashValue() ;
-            temp_hashValue.location = point ;
-            hashC.put(keyword, temp_hashValue) ;
+        // check if we are about to exceed the capacity
+        // TO DO: as we go down, to transfer exactly the data (ex. 2 microsoft, have also 2 at the next level)
+        if (this.curCapacity + 1 <= this.maxCapacity) {
+            this.curCapacity++ ;
+            if (hashC.containsKey(keyword)) {
+                System.out.println("--> We have it already: " + keyword);
+                hashValue temp_hashValue = hashC.get(keyword);
+                (temp_hashValue.countersN)[0]++;
+            }
+            else {
+                System.out.println("--> We add '" + keyword + "' to level " + this.level);
+                //this.curK++;
+                hashValue temp_hashValue = new hashValue();
+                temp_hashValue.location = point;
+                hashC.put(keyword, temp_hashValue);
+            }
         }
         else {
             //if we have exceeded the capacity of this leaf

@@ -6,7 +6,7 @@ public class projectMain {
         //String sampleDataFile = "sampleData.txt" ;
         String sampleDataFile = "C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\smallData.txt" ;
         String newDdataFile = "" ;
-        int k = 4 ;
+        int k = 2 ;
 
         myGeoTrend geoTrend = new myGeoTrend(k) ;
 
