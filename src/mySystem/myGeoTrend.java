@@ -17,6 +17,10 @@ public class myGeoTrend {
 
         ret = firstCell.addKeyword(keyword, point, timestamp) ;
 
+        System.out.println("-----------------------------------------");
+        firstCell.printCell() ;
+        System.out.println("-----------------------------------------");
+
         System.out.println("ret = " + ret) ;
     }
 
