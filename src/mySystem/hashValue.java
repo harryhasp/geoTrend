@@ -5,20 +5,21 @@ import java.util.List;
 
 public class hashValue {
 
-    int n = 3 ;
-
+    //int n = 3 ;
+    int N ;
     int[] countersN ;
     int tRrend ;
     List<myPoint>[] locations ;
     // list of lists for locations. First list size of n (T/N)
 
-    hashValue() {
-        this.countersN = new int[n] ;
+    hashValue(int N) {
+        this.N = N ;
+        this.countersN = new int[N] ;
         for (int i = 0 ; i < (this.countersN).length ; i++) {
             (this.countersN)[i] = 0 ;
         }
         this.tRrend = tRrend ;
-        this.locations = new List[n] ;
+        this.locations = new List[N] ;
         for (int i = 0 ; i < (this.locations).length ; i++) {
             (this.locations)[i] = new ArrayList<>() ;
         }

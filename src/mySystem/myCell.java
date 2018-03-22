@@ -13,8 +13,9 @@ public class myCell {
     int level ;
     myCell leftUp, leftDown, rightUp, rightDown ;
     int k ;
+    int N ;
 
-    myCell(double minX, double maxX, double minY, double maxY, int level, int k) {
+    myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N) {
         System.out.println("myCell init - level = " + level) ;
         this.maxCapacity = 4 ;
         this.curCapacity = 0 ;
@@ -23,19 +24,9 @@ public class myCell {
         this.level = level ;
         this.leftUp = this.leftDown = this.rightUp = this.rightDown = null ;
         this.k = k ;
+        this.N = N ;
         this.curK = 0 ;
     }
-    /*
-    myCell(double minX, double maxX, double minY, double maxY, int level) {
-        System.out.println("myCell init - level = " + level) ;
-        //this.maxCapacity = 4 ;
-        this.curCapacity = 0 ;
-        this.mbr = new mbr(minX, maxX, minY, maxY) ;
-        this.hashC = new Hashtable<>() ;
-        this.level = level ;
-        this.leftUp = this.leftDown = this.rightUp = this.rightDown = null ;
-    }
-    */
 
     // TO DO : store timestamp, now zero everywhere
     int addKeyword (String keyword, myPoint point, long timestamp) {
@@ -55,7 +46,7 @@ public class myCell {
             else {
                 System.out.println("--> We add '" + keyword + "' to level " + this.level);
                 //this.curK++;
-                hashValue temp_hashValue = new hashValue();
+                hashValue temp_hashValue = new hashValue(this.N);
                 temp_hashValue.locations[0].add(point) ;
                 temp_hashValue.countersN[0] = 1 ;
                 hashC.put(keyword, temp_hashValue);
@@ -76,7 +67,7 @@ public class myCell {
                 System.out.println("--> cellCase = 0");
                 if (this.leftUp == null) {
                     System.out.println("--> We need to create leftUp");
-                    this.leftUp = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k);
+                    this.leftUp = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N);
 
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
@@ -99,7 +90,7 @@ public class myCell {
                 System.out.println("--> cellCase = 1");
                 if (this.rightUp == null) {
                     System.out.println("--> We need to create rightUp");
-                    this.rightUp = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k);
+                    this.rightUp = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N);
 
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
@@ -122,7 +113,7 @@ public class myCell {
                 System.out.println("--> cellCase = 2");
                 if (this.leftDown == null) {
                     System.out.println("--> We need to create leftDown");
-                    this.leftDown = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k);
+                    this.leftDown = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N);
 
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
@@ -145,7 +136,7 @@ public class myCell {
                 System.out.println("--> cellCase = 3");
                 if (this.rightDown == null) {
                     System.out.println("--> We need to create rightDown");
-                    this.rightDown = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k);
+                    this.rightDown = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N);
 
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
