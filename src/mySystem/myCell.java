@@ -60,7 +60,7 @@ public class myCell {
             int cellCase = -1;
 
             System.out.println(point.longitude + " - " + point.latitude);
-            System.out.println(splitX + " - " + splitY);
+            System.out.println("splits to: " + splitX + " - " + splitY);
 
             if ((point.longitude < splitX) && (point.latitude >= splitY)) {
                 cellCase = 0;
@@ -72,7 +72,13 @@ public class myCell {
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
                         hashValue temp_hashValue = hashC.get(key);
-//                        if ((temp_hashValue.location.longitude < splitX) && (temp_hashValue.location.latitude >= splitY)) {
+                        for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
+                            if ( (temp_hashValue.locations[0].get(j).longitude < splitX) && (temp_hashValue.locations[0].get(j).latitude >= splitY) ) {
+                                System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
+                                (this.leftUp).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
+                            }
+                        }
+//                        if ((temp_hashValue.locations[0].longitude < splitX) && (temp_hashValue.location.latitude >= splitY)) {
 //                            System.out.println("Transfer down the keyword : " + key);
 //                            (this.leftUp).addKeyword(key, temp_hashValue.location, 0);
 //                        }
@@ -95,6 +101,12 @@ public class myCell {
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
                         hashValue temp_hashValue = hashC.get(key);
+                        for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
+                            if ( (temp_hashValue.locations[0].get(j).longitude >= splitX) && (temp_hashValue.locations[0].get(j).latitude >= splitY) ) {
+                                System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
+                                (this.rightUp).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
+                            }
+                        }
 //                        if ((temp_hashValue.location.longitude >= splitX) && (temp_hashValue.location.latitude >= splitY)) {
 //                            System.out.println("Transfer down the keyword : " + key);
 //                            (this.rightUp).addKeyword(key, temp_hashValue.location, 0);
@@ -118,6 +130,12 @@ public class myCell {
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
                         hashValue temp_hashValue = hashC.get(key);
+                        for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
+                            if ( (temp_hashValue.locations[0].get(j).longitude < splitX) && (temp_hashValue.locations[0].get(j).latitude < splitY) ) {
+                                System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
+                                (this.leftDown).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
+                            }
+                        }
 //                        if ((temp_hashValue.location.longitude < splitX) && (temp_hashValue.location.latitude < splitY)) {
 //                            System.out.println("Transfer down the keyword : " + key);
 //                            (this.leftDown).addKeyword(key, temp_hashValue.location, 0);
@@ -141,6 +159,12 @@ public class myCell {
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
                         hashValue temp_hashValue = hashC.get(key);
+                        for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
+                            if ( (temp_hashValue.locations[0].get(j).longitude >= splitX) && (temp_hashValue.locations[0].get(j).latitude < splitY) ) {
+                                System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
+                                (this.rightDown).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
+                            }
+                        }
 //                        if ((temp_hashValue.location.longitude >= splitX) && (temp_hashValue.location.latitude < splitY)) {
 //                            System.out.println("Transfer down the keyword : " + key);
 //                            (this.rightDown).addKeyword(key, temp_hashValue.location, 0);
