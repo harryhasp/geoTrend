@@ -23,8 +23,8 @@ public class myMain {
 
 
         // Create the sample file for initial index sharping
-        //File fout1 = new File("C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\sampleData.txt") ;
-        File fout1 = new File("C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\smallData.txt") ;
+        File fout1 = new File("C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\sampleData.txt") ;
+        //File fout1 = new File("C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\smallData.txt") ;
         FileOutputStream fos1 = new FileOutputStream(fout1) ;
 
         BufferedWriter bw1 = new BufferedWriter(new OutputStreamWriter(fos1));
@@ -36,10 +36,10 @@ public class myMain {
             //System.out.println(timestamp.getTime());
             //bw1.write(Long.toString(timestamp.getTime()) + ",") ;
 
-            bw1.write((Long.toString(timer)) + ",") ;
-            if ( (i != 0) && (i % 2 != 0) ) {
+            if (i % 10 == 0) {
                 timer++ ;
             }
+            bw1.write((Long.toString(timer)) + ",") ;
 
             double x = ThreadLocalRandom.current().nextDouble(leftLimit, rightLimit) ;
             //double x = ThreadLocalRandom.current().nextDouble(rightLimit - leftLimit) + leftLimit ;
