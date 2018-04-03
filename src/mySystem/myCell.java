@@ -78,10 +78,6 @@ public class myCell {
                                 (this.leftUp).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
                             }
                         }
-//                        if ((temp_hashValue.locations[0].longitude < splitX) && (temp_hashValue.location.latitude >= splitY)) {
-//                            System.out.println("Transfer down the keyword : " + key);
-//                            (this.leftUp).addKeyword(key, temp_hashValue.location, 0);
-//                        }
                     }
 
                     (this.leftUp).addKeyword(keyword, point, 0);
@@ -107,10 +103,6 @@ public class myCell {
                                 (this.rightUp).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
                             }
                         }
-//                        if ((temp_hashValue.location.longitude >= splitX) && (temp_hashValue.location.latitude >= splitY)) {
-//                            System.out.println("Transfer down the keyword : " + key);
-//                            (this.rightUp).addKeyword(key, temp_hashValue.location, 0);
-//                        }
                     }
 
                     (this.rightUp).addKeyword(keyword, point, 0);
@@ -136,10 +128,6 @@ public class myCell {
                                 (this.leftDown).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
                             }
                         }
-//                        if ((temp_hashValue.location.longitude < splitX) && (temp_hashValue.location.latitude < splitY)) {
-//                            System.out.println("Transfer down the keyword : " + key);
-//                            (this.leftDown).addKeyword(key, temp_hashValue.location, 0);
-//                        }
                     }
 
                     (this.leftDown).addKeyword(keyword, point, 0);
@@ -165,10 +153,6 @@ public class myCell {
                                 (this.rightDown).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
                             }
                         }
-//                        if ((temp_hashValue.location.longitude >= splitX) && (temp_hashValue.location.latitude < splitY)) {
-//                            System.out.println("Transfer down the keyword : " + key);
-//                            (this.rightDown).addKeyword(key, temp_hashValue.location, 0);
-//                        }
                     }
 
                     (this.rightDown).addKeyword(keyword, point, 0);

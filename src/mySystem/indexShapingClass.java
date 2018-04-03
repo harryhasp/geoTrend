@@ -7,6 +7,8 @@ public class indexShapingClass {
 
     public void indexShaping(myGeoTrend geoTrend, String sampleDataFile) {
 
+        int timer = 0 ;
+
         try {
             File file = new File(sampleDataFile) ;
             FileReader fileReader = null ;

@@ -7,9 +7,10 @@ public class projectMain {
         String sampleDataFile = "C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\smallData.txt" ;
         String newDdataFile = "" ;
         int k = 2 ;
-        int N = 4 ;
+        int N = 2 ; // N counters - T/N
+        int T = 10 ; // T time units - number of time units that we keep data
 
-        myGeoTrend geoTrend = new myGeoTrend(k, N) ;
+        myGeoTrend geoTrend = new myGeoTrend(k, N, T) ;
 
         indexShapingClass indexShape = new indexShapingClass() ;
         indexShape.indexShaping(geoTrend, sampleDataFile) ;
