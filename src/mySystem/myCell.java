@@ -29,7 +29,7 @@ public class myCell {
     }
 
     // TO DO : store timestamp, now zero everywhere
-    int addKeyword (String keyword, myPoint point, long timestamp) {
+    int addKeyword (String keyword, myPoint point, long timestamp, int p) {
         //this.curCapacity++ ;
 
         // check if we are about to exceed the capacity
@@ -75,16 +75,16 @@ public class myCell {
                         for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
                             if ( (temp_hashValue.locations[0].get(j).longitude < splitX) && (temp_hashValue.locations[0].get(j).latitude >= splitY) ) {
                                 System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
-                                (this.leftUp).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
+                                (this.leftUp).addKeyword(key, temp_hashValue.locations[0].get(j), timestamp, p);
                             }
                         }
                     }
 
-                    (this.leftUp).addKeyword(keyword, point, 0);
+                    (this.leftUp).addKeyword(keyword, point, timestamp, p);
                 }
                 else {
                     System.out.println("--> We HAVE the leftUp");
-                    (this.leftUp).addKeyword(keyword, point, 0);
+                    (this.leftUp).addKeyword(keyword, point, timestamp, p);
                 }
             }
             else if ((point.longitude >= splitX) && (point.latitude >= splitY)) {
@@ -100,16 +100,16 @@ public class myCell {
                         for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
                             if ( (temp_hashValue.locations[0].get(j).longitude >= splitX) && (temp_hashValue.locations[0].get(j).latitude >= splitY) ) {
                                 System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
-                                (this.rightUp).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
+                                (this.rightUp).addKeyword(key, temp_hashValue.locations[0].get(j), timestamp, p);
                             }
                         }
                     }
 
-                    (this.rightUp).addKeyword(keyword, point, 0);
+                    (this.rightUp).addKeyword(keyword, point, timestamp, p);
                 }
                 else {
                     System.out.println("--> We HAVE the rightUp");
-                    (this.rightUp).addKeyword(keyword, point, 0);
+                    (this.rightUp).addKeyword(keyword, point, timestamp, p);
                 }
             }
             else if ((point.longitude < splitX) && (point.latitude < splitY)) {
@@ -125,16 +125,16 @@ public class myCell {
                         for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
                             if ( (temp_hashValue.locations[0].get(j).longitude < splitX) && (temp_hashValue.locations[0].get(j).latitude < splitY) ) {
                                 System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
-                                (this.leftDown).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
+                                (this.leftDown).addKeyword(key, temp_hashValue.locations[0].get(j), timestamp, p);
                             }
                         }
                     }
 
-                    (this.leftDown).addKeyword(keyword, point, 0);
+                    (this.leftDown).addKeyword(keyword, point, timestamp, p);
                 }
                 else {
                     System.out.println("--> We HAVE the leftDown");
-                    (this.leftDown).addKeyword(keyword, point, 0);
+                    (this.leftDown).addKeyword(keyword, point, timestamp, p);
                 }
             }
             else if ((point.longitude >= splitX) && (point.latitude < splitY)) {
@@ -150,16 +150,16 @@ public class myCell {
                         for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
                             if ( (temp_hashValue.locations[0].get(j).longitude >= splitX) && (temp_hashValue.locations[0].get(j).latitude < splitY) ) {
                                 System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
-                                (this.rightDown).addKeyword(key, temp_hashValue.locations[0].get(j), 0);
+                                (this.rightDown).addKeyword(key, temp_hashValue.locations[0].get(j), timestamp, p);
                             }
                         }
                     }
 
-                    (this.rightDown).addKeyword(keyword, point, 0);
+                    (this.rightDown).addKeyword(keyword, point, timestamp, p);
                 }
                 else {
                     System.out.println("--> We HAVE the rightDown");
-                    (this.rightDown).addKeyword(keyword, point, 0);
+                    (this.rightDown).addKeyword(keyword, point, timestamp, p);
                 }
             }
             else {

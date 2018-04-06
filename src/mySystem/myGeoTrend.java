@@ -23,15 +23,10 @@ public class myGeoTrend {
     public void newKeyword (String keyword, myPoint point, long timestamp) {
         int ret ;
 
-        if ( timestamp % (T/N) == 0 ) {
-            p++ ;
-        }
-        if (p == N) {
-            System.out.println("-------------> Go from the beginning");
-            p = 0 ;
-        }
+        p = (int) ( (timestamp / (T/N)) % N) ;
+        System.out.println("-------------> p = " + p);
 
-        ret = firstCell.addKeyword(keyword, point, timestamp) ;
+        ret = firstCell.addKeyword(keyword, point, timestamp, p) ;
 
         System.out.println("ret = " + ret) ;
 

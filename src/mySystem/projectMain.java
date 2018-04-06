@@ -8,7 +8,7 @@ public class projectMain {
         String newDdataFile = "" ;
         int k = 2 ;
         int N = 2 ; // N counters - T/N
-        int T = 10 ; // T time units - number of time units that we keep data
+        int T = 4 ; // T time units - number of time units that we keep data
 
         myGeoTrend geoTrend = new myGeoTrend(k, N, T) ;
 
