@@ -7,15 +7,17 @@ public class myCell {
 
     int maxCapacity ;
     int curCapacity ;
-    int curK ;
+    int p ;
     mbr mbr ;
     Hashtable<String, hashValue> hashC ;
     int level ;
     myCell leftUp, leftDown, rightUp, rightDown ;
     int k ;
     int N ;
+    int T ; // T time units - number of time units that we keep data
+    long lastTimestamp ;
 
-    myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N) {
+    myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T) {
         System.out.println("myCell init - level = " + level) ;
         this.maxCapacity = 4 ;
         this.curCapacity = 0 ;
@@ -25,30 +27,35 @@ public class myCell {
         this.leftUp = this.leftDown = this.rightUp = this.rightDown = null ;
         this.k = k ;
         this.N = N ;
-        this.curK = 0 ;
+        this.T = T ;
+        this.p = 0 ;
+        this.lastTimestamp = 0 ;
     }
 
     // TO DO : store timestamp, now zero everywhere
     int addKeyword (String keyword, myPoint point, long timestamp, int p) {
-        //this.curCapacity++ ;
+
+        this.p = p ;
+
+        if ( ((timestamp - this.lastTimestamp) % this.T) > 0 ) {
+            System.out.println("-----------------> We need to delete") ;
+        }
 
         // check if we are about to exceed the capacity
-        // TO DO: as we go down, to transfer exactly the data (ex. 2 microsoft, have also 2 at the next level)
         if (this.curCapacity + 1 <= this.maxCapacity) {
             this.curCapacity++ ;
             if (hashC.containsKey(keyword)) {
                 System.out.println("--> We have it already: " + keyword);
                 hashValue temp_hashValue = hashC.get(keyword);
-                (temp_hashValue.countersN)[0]++;
-                temp_hashValue.locations[0].add(point) ;
+                (temp_hashValue.countersN)[p]++;
+                temp_hashValue.locations[p].add(point) ;
                 hashC.put(keyword, temp_hashValue);
             }
             else {
                 System.out.println("--> We add '" + keyword + "' to level " + this.level);
-                //this.curK++;
                 hashValue temp_hashValue = new hashValue(this.N);
-                temp_hashValue.locations[0].add(point) ;
-                temp_hashValue.countersN[0] = 1 ;
+                temp_hashValue.locations[p].add(point) ;
+                temp_hashValue.countersN[p] = 1 ;
                 hashC.put(keyword, temp_hashValue);
             }
         }
@@ -67,15 +74,18 @@ public class myCell {
                 System.out.println("--> cellCase = 0");
                 if (this.leftUp == null) {
                     System.out.println("--> We need to create leftUp");
-                    this.leftUp = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N);
+                    this.leftUp = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
 
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
                         hashValue temp_hashValue = hashC.get(key);
-                        for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
-                            if ( (temp_hashValue.locations[0].get(j).longitude < splitX) && (temp_hashValue.locations[0].get(j).latitude >= splitY) ) {
-                                System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
-                                (this.leftUp).addKeyword(key, temp_hashValue.locations[0].get(j), timestamp, p);
+                        for (int i = 0 ; i < this.N - 1 ; i++) {
+                            int tempP = (i+p) % this.N ;
+                            for (int j = 0; j < temp_hashValue.locations[tempP].size(); j++) {
+                                if ((temp_hashValue.locations[tempP].get(j).longitude < splitX) && (temp_hashValue.locations[tempP].get(j).latitude >= splitY)) {
+                                    System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).longitude + " - " + temp_hashValue.locations[tempP].get(j).latitude);
+                                    (this.leftUp).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
                             }
                         }
                     }
@@ -92,15 +102,18 @@ public class myCell {
                 System.out.println("--> cellCase = 1");
                 if (this.rightUp == null) {
                     System.out.println("--> We need to create rightUp");
-                    this.rightUp = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N);
+                    this.rightUp = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
 
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
                         hashValue temp_hashValue = hashC.get(key);
-                        for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
-                            if ( (temp_hashValue.locations[0].get(j).longitude >= splitX) && (temp_hashValue.locations[0].get(j).latitude >= splitY) ) {
-                                System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
-                                (this.rightUp).addKeyword(key, temp_hashValue.locations[0].get(j), timestamp, p);
+                        for (int i = 0 ; i < this.N - 1 ; i++) {
+                            int tempP = (i+p) % this.N ;
+                            for (int j = 0; j < temp_hashValue.locations[tempP].size(); j++) {
+                                if ((temp_hashValue.locations[tempP].get(j).longitude >= splitX) && (temp_hashValue.locations[tempP].get(j).latitude >= splitY)) {
+                                    System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).longitude + " - " + temp_hashValue.locations[tempP].get(j).latitude);
+                                    (this.rightUp).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
                             }
                         }
                     }
@@ -117,15 +130,18 @@ public class myCell {
                 System.out.println("--> cellCase = 2");
                 if (this.leftDown == null) {
                     System.out.println("--> We need to create leftDown");
-                    this.leftDown = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N);
+                    this.leftDown = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
 
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
                         hashValue temp_hashValue = hashC.get(key);
-                        for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
-                            if ( (temp_hashValue.locations[0].get(j).longitude < splitX) && (temp_hashValue.locations[0].get(j).latitude < splitY) ) {
-                                System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
-                                (this.leftDown).addKeyword(key, temp_hashValue.locations[0].get(j), timestamp, p);
+                        for (int i = 0 ; i < this.N - 1 ; i++) {
+                            int tempP = (i+p) % this.N ;
+                            for (int j = 0; j < temp_hashValue.locations[tempP].size(); j++) {
+                                if ((temp_hashValue.locations[tempP].get(j).longitude < splitX) && (temp_hashValue.locations[tempP].get(j).latitude < splitY)) {
+                                    System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).longitude + " - " + temp_hashValue.locations[tempP].get(j).latitude);
+                                    (this.leftDown).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
                             }
                         }
                     }
@@ -142,15 +158,18 @@ public class myCell {
                 System.out.println("--> cellCase = 3");
                 if (this.rightDown == null) {
                     System.out.println("--> We need to create rightDown");
-                    this.rightDown = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N);
+                    this.rightDown = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
 
                     Set<String> keys = hashC.keySet();
                     for (String key : keys) {
                         hashValue temp_hashValue = hashC.get(key);
-                        for (int j = 0 ; j < temp_hashValue.locations[0].size() ; j++) {
-                            if ( (temp_hashValue.locations[0].get(j).longitude >= splitX) && (temp_hashValue.locations[0].get(j).latitude < splitY) ) {
-                                System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[0].get(j).longitude + " - " + temp_hashValue.locations[0].get(j).latitude);
-                                (this.rightDown).addKeyword(key, temp_hashValue.locations[0].get(j), timestamp, p);
+                        for (int i = 0 ; i < this.N - 1 ; i++) {
+                            int tempP = (i+p) % this.N ;
+                            for (int j = 0; j < temp_hashValue.locations[tempP].size(); j++) {
+                                if ((temp_hashValue.locations[tempP].get(j).longitude >= splitX) && (temp_hashValue.locations[tempP].get(j).latitude < splitY)) {
+                                    System.out.println("Transfer down the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).longitude + " - " + temp_hashValue.locations[tempP].get(j).latitude);
+                                    (this.rightDown).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
                             }
                         }
                     }
@@ -179,6 +198,9 @@ public class myCell {
             }
             */
         }
+
+        printCell();
+
         return 0;
     }
 
