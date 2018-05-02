@@ -14,6 +14,7 @@ public class hashValue {
 
     hashValue(int N) {
         this.N = N ;
+        //njikn
         this.countersN = new int[N] ;
         for (int i = 0 ; i < (this.countersN).length ; i++) {
             (this.countersN)[i] = 0 ;
