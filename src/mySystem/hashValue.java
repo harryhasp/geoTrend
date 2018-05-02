@@ -8,7 +8,7 @@ public class hashValue {
     //int n = 3 ;
     int N ;
     int[] countersN ;
-    int tRrend ;
+    double trend ;
     List<myPoint>[] locations ;
     // list of lists for locations. First list size of n (T/N)
 
@@ -18,7 +18,7 @@ public class hashValue {
         for (int i = 0 ; i < (this.countersN).length ; i++) {
             (this.countersN)[i] = 0 ;
         }
-        this.tRrend = tRrend ;
+        this.trend = (double) (6*(N-1)) / (N*(N+1)*(2*N+1)) ;
         this.locations = new List[N] ;
         for (int i = 0 ; i < (this.locations).length ; i++) {
             (this.locations)[i] = new ArrayList<>() ;

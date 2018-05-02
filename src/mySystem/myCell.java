@@ -47,15 +47,17 @@ public class myCell {
             if (hashC.containsKey(keyword)) {
                 System.out.println("--> We have it already: " + keyword);
                 hashValue temp_hashValue = hashC.get(keyword);
-                (temp_hashValue.countersN)[p]++;
+                temp_hashValue.countersN[p]++;
                 temp_hashValue.locations[p].add(point) ;
+                temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                 hashC.put(keyword, temp_hashValue);
             }
-            else {
+            else { // new keyword
                 System.out.println("--> We add '" + keyword + "' to level " + this.level);
                 hashValue temp_hashValue = new hashValue(this.N);
                 temp_hashValue.locations[p].add(point) ;
                 temp_hashValue.countersN[p] = 1 ;
+                //temp_hashValue.trend = (6*(N-1)) / (N*(N+1)*(2*N+1)) ;
                 hashC.put(keyword, temp_hashValue);
             }
         }
@@ -205,11 +207,26 @@ public class myCell {
     }
 
 
+    double trendCalculation(int p, int[] countersN) {
+        int down = N*(N+1)*(2*N+1) ;
+        int up = 0 ;
+        int cO = (p+N-1)%N ;
+        int multiplier = N-1 ;
+        for (int i = 0 ; i < this.N - 1 ; i++) {
+            int tempP = (i+p) % this.N ;
+            up = up + (multiplier * (countersN[tempP] - countersN[cO])) ;
+            multiplier-- ;
+        }
+        //System.out.println("--> retTrend : " + (double) (6*up) / down);
+        return (double) (6*up) / down ;
+    }
+
+
     void printCell() {
         Set<String> keys = hashC.keySet() ;
         for (String key: keys) {
             hashValue temp = hashC.get(key) ;
-            System.out.println(key);
+            System.out.println(key + " - Trend = " + temp.trend);
             for (int i = 0 ; i < temp.countersN.length ; i++) {
                 System.out.println("counter = " + temp.countersN[i]);
                 for (int j = 0 ; j < temp.locations[i].size() ; j++) {
