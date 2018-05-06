@@ -231,9 +231,9 @@ public class myCell {
     }
 
 
-    double trendCalculation(int p, int[] countersN) {
+    double trendCalculation(int p, double[] countersN) {
         int down = N*(N+1)*(2*N+1) ;
-        int up = 0 ;
+        double up = 0.0 ;
         int cO = (p+N-1)%N ;
         int multiplier = N-1 ;
         for (int i = 0 ; i < this.N - 1 ; i++) {
@@ -242,7 +242,7 @@ public class myCell {
             multiplier-- ;
         }
         //System.out.println("--> retTrend : " + (double) (6*up) / down);
-        return (double) (6*up) / down ;
+        return 6*up / down ;
     }
 
 

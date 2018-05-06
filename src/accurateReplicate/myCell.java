@@ -37,9 +37,61 @@ public class myCell {
 
         this.p = p ;
 
-        if ( ((timestamp - this.lastTimestamp) % this.T) > 0 ) {
-            System.out.println("-----------------> We need to delete") ;
+//        if ( ((timestamp - this.lastTimestamp) % this.T) > 0 ) {
+//            System.out.println("-----------------> We need to delete") ;
+//        }
+
+        if (this.leftUpCell == null) { // we are at a leaf - no children exist
+
         }
+        else { // we are NOT at a leaf - all the 4 children exist
+            System.out.println("--> We are not at a leaf - level = " + this.level);
+            // add keyword to the aggregate table
+            if (hashC.containsKey(keyword)) { // existed keyword
+                System.out.println("--> We have it already: " + keyword);
+                hashValue temp_hashValue = hashC.get(keyword);
+                temp_hashValue.countersN[p]++;
+                //temp_hashValue.locations[p].add(point) ;
+                temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
+                hashC.put(keyword, temp_hashValue);
+            }
+            else { // new keyword
+                System.out.println("--> We add '" + keyword + "' to level " + this.level);
+                hashValue temp_hashValue = new hashValue(this.N);
+                temp_hashValue.countersN[p] = 1 ;
+                //temp_hashValue.locations[p].add(point) ;
+                //temp_hashValue.trend = (6*(N-1)) / (N*(N+1)*(2*N+1)) ;
+                hashC.put(keyword, temp_hashValue);
+            }
+
+            // push keyword to the appropriate child
+            System.out.println("--> We need to go down to level = " + this.level+1);
+            double splitX = mbr.leftUp.longitude + ((mbr.rightDown.longitude - mbr.leftUp.longitude) / 2);
+            double splitY = mbr.rightDown.latitude + ((mbr.leftUp.latitude - mbr.rightDown.latitude) / 2);
+            System.out.println(point.longitude + " - " + point.latitude);
+            System.out.println("splits to: " + splitX + " - " + splitY);
+            // choose the correct child
+            if ((point.longitude < splitX) && (point.latitude >= splitY)) {
+
+            }
+            else if ((point.longitude >= splitX) && (point.latitude >= splitY)) {
+
+            }
+            else if ((point.longitude < splitX) && (point.latitude < splitY)) {
+
+            }
+            else if ((point.longitude >= splitX) && (point.latitude < splitY)) {
+
+            }
+            else {
+                System.out.println("----> SOMETHING STRANGE IS GOING ON");
+            }
+        }
+
+
+
+
+
 
         // check if we are about to exceed the capacity
         if (this.curCapacity + 1 <= this.maxCapacity) {
