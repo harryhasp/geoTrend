@@ -34,7 +34,7 @@ public class myCell {
 
     // TO DO : store timestamp, now zero everywhere
     int addKeyword (String keyword, myPoint point, long timestamp, int p) {
-
+/*
         this.p = p ;
 
         if ( ((timestamp - this.lastTimestamp) % this.T) > 0 ) {
@@ -212,21 +212,10 @@ public class myCell {
             }
 
             return 1;
-
-            /*
-            //this.curCapacity++ ;
-            if (this.curCapacity > this.maxCapacity) {
-                System.out.println("--> We JUST exceeded the capacity") ;
-                return 2 ;
-            }
-            else { // we still have space
-                return 0 ;
-            }
-            */
         }
 
         printCell();
-
+*/
         return 0;
     }
 
