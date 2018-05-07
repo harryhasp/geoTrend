@@ -1,4 +1,4 @@
-package equalReplicate;
+package approximateReplicate;
 
 public class myGeoTrend {
 
@@ -27,7 +27,7 @@ public class myGeoTrend {
         p = N - 1 - p ;
         System.out.println("-------------> p = " + p);
 
-        ret = firstCell.addKeyword(keyword, point, timestamp, p) ;
+        ret = firstCell.addKeyword(keyword, point, timestamp, p, -1) ;
 
         System.out.println("ret = " + ret) ;
 

@@ -1,4 +1,4 @@
-package equalReplicate;
+package approximateReplicate;
 
 import java.io.BufferedReader;
 import java.io.File;

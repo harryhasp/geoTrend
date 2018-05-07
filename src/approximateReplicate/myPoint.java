@@ -1,4 +1,4 @@
-package equalReplicate;
+package approximateReplicate;
 
 public class myPoint {
 
