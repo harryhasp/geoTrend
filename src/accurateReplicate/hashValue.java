@@ -23,9 +23,6 @@ public class hashValue {
         for (int i = 0 ; i < (this.locations).length ; i++) {
             (this.locations)[i] = new ArrayList<>() ;
         }
-
-        //this.location = new ArrayList<>() ;
-        //this.location = new myPoint(Double.MAX_VALUE, Double.MAX_VALUE) ;
     }
 
 }

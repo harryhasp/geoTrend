@@ -12,8 +12,8 @@ public class projectMain {
 
         myGeoTrend geoTrend = new myGeoTrend(k, N, T) ;
 
-        indexShapingClass indexShape = new indexShapingClass() ;
-        indexShape.indexShaping(geoTrend, sampleDataFile) ;
+        insertKeywordsClass indexShape = new insertKeywordsClass() ;
+        indexShape.insertKeywords(geoTrend, sampleDataFile) ;
     }
 
 }

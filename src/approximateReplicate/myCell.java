@@ -37,9 +37,9 @@ public class myCell {
 
         this.p = p ;
 
-        if ( ((timestamp - this.lastTimestamp) % this.T) > 0 ) {
-            System.out.println("-----------------> We need to delete") ;
-        }
+//        if ( ((timestamp - this.lastTimestamp) % this.T) > 0 ) {
+//            System.out.println("-----------------> We need to delete") ;
+//        }
 
 
         if (this.leftUpCell == null) { // we are at a leaf - no children exist
@@ -126,7 +126,7 @@ public class myCell {
                         System.out.println("-----------------------------------> H E R E - 1");
                         temp_hashValue.countersN[p]++;
                     }
-                    else { // keyword comes from a split
+                    else { // keyword comes from a split - probably never come here
                         System.out.println("-----------------------------------> H E R E - 2");
                         temp_hashValue.countersN[p] = aboveCounter ;
                     }
@@ -141,7 +141,7 @@ public class myCell {
                         System.out.println("-----------------------------------> H E R E - 3");
                         temp_hashValue.countersN[p] = 1 ;
                     }
-                    else { // new keyword comes from a split
+                    else { // new keyword comes from a split - probably never come here
                         System.out.println("-----------------------------------> H E R E - 4");
                         temp_hashValue.countersN[p] = aboveCounter ;
                     }
@@ -188,7 +188,7 @@ public class myCell {
                     System.out.println("-----------------------------------> H E R E - 1.1");
                     temp_hashValue.countersN[p]++;
                 }
-                else { // keyword comes from a split
+                else { // keyword comes from a split - probably never come here
                     System.out.println("-----------------------------------> H E R E - 2.1");
                     temp_hashValue.countersN[p] = aboveCounter ;
                 }
@@ -203,7 +203,7 @@ public class myCell {
                     System.out.println("-----------------------------------> H E R E - 3.1");
                     temp_hashValue.countersN[p] = 1 ;
                 }
-                else { // new keyword comes from a split
+                else { // new keyword comes from a split - probably never come here
                     System.out.println("-----------------------------------> H E R E - 4.1");
                     temp_hashValue.countersN[p] = aboveCounter ;
                 }
@@ -262,15 +262,13 @@ public class myCell {
 
 
     void printCell() {
+        System.out.println("Print for level " + this.level);
         Set<String> keys = hashC.keySet() ;
         for (String key: keys) {
             hashValue temp = hashC.get(key) ;
             System.out.println(key + " - Trend = " + temp.trend);
             for (int i = 0 ; i < temp.countersN.length ; i++) {
                 System.out.println("counter = " + temp.countersN[i]);
-//                for (int j = 0 ; j < temp.locations[i].size() ; j++) {
-//                    System.out.println(temp.locations[i].get(j).longitude + " - " + temp.locations[i].get(j).latitude);
-//                }
             }
         }
     }

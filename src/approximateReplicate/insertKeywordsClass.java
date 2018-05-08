@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class indexShapingClass {
+public class insertKeywordsClass {
 
-    public void indexShaping(myGeoTrend geoTrend, String sampleDataFile) {
+    public void insertKeywords(myGeoTrend geoTrend, String sampleDataFile) {
 
         int timer = 0 ;
 
@@ -18,8 +18,6 @@ public class indexShapingClass {
             FileReader fileReader = null ;
             fileReader = new FileReader(file) ;
             BufferedReader bufferedReader = new BufferedReader(fileReader) ;
-
-            //Hashtable<String, hashValue> hashC = new Hashtable<>() ;
 
             String line ;
             while ((line = bufferedReader.readLine()) != null) {
@@ -38,18 +36,6 @@ public class indexShapingClass {
                 geoTrend.newKeyword(keyword, newPoint, timestamp) ;
             }
             fileReader.close();
-            /*
-            // check hash data
-            Set<String> keys = hashC.keySet();
-            for(String key: keys){
-                hashValue temp_hashValue = hashC.get(key) ;
-                System.out.print("Value of " + key + " is: ") ;
-                for (int i = 0 ; i < (temp_hashValue.countersN).length ; i++ ) {
-                    System.out.print((temp_hashValue.countersN)[i] + " - " ) ;
-                }
-                System.out.println() ;
-            }
-            */
 
         } catch (IOException e) {
             e.printStackTrace();
