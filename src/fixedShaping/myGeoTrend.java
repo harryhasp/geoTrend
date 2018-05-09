@@ -34,4 +34,8 @@ public class myGeoTrend {
 //        System.out.println("----------------------------------------- printCell - end");
     }
 
+    public void clearIndex () {
+        firstCell.clearCellData() ;
+    }
+
 }

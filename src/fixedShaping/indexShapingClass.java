@@ -41,6 +41,8 @@ public class indexShapingClass {
         catch (IOException e) {
             e.printStackTrace();
         }
+
+        geoTrend.clearIndex() ;
     }
 
 }

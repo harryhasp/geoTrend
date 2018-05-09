@@ -170,6 +170,23 @@ public class myCell {
     }
 
 
+    void clearCellData () {
+        System.out.println("Clear cell at level " + this.level + " with x from " + this.mbr.leftUp.longitude + " to " + this.mbr.rightDown.longitude +
+                " and y from " + this.mbr.rightDown.latitude + " to " + this.mbr.leftUp.latitude) ;
+        this.maxCapacity = 4 ;
+        this.curCapacity = 0 ;
+        this.hashC = new Hashtable<>() ;
+        this.lastTimestamp = 0 ;
+        this.countersSum = new int[N] ;
+        for (int i = 0 ; i < countersSum.length ; i++) {
+            this.countersSum[i] = 0 ;
+        }
+        this.counterInsertion = 0 ;
+        // go to children
+        this.leftUpCell = this.leftDownCell = this.rightUpCell = this.rightDownCell = null ;
+    }
+
+
     double trendCalculation(int p, double[] countersN) {
         int down = N*(N+1)*(2*N+1) ;
         double up = 0.0 ;
