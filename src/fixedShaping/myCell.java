@@ -16,6 +16,8 @@ public class myCell {
     int N ;
     int T ; // T time units - number of time units that we keep data
     long lastTimestamp ;
+    int[] countersSum ;
+    int counterInsertion ;
 
     myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T) {
         System.out.println("myCell init - level = " + level) ;
@@ -30,46 +32,34 @@ public class myCell {
         this.T = T ;
         this.p = 0 ;
         this.lastTimestamp = 0 ;
+        this.countersSum = new int[N] ;
+        for (int i = 0 ; i < countersSum.length ; i++) {
+            this.countersSum[i] = 0 ;
+        }
+        this.counterInsertion = 0 ;
     }
 
     // TO DO :
-    int addIndexingKeyword (String keyword, myPoint point, double aboveCounter) {
-/*
-        if (this.leftUpCell == null) { // we are at a leaf - no children exist
+    int addIndexingKeyword (String keyword, myPoint point) {
+
+        if ( (this.leftUpCell == null) && (this.rightUpCell == null) && (this.leftDownCell == null) && (this.rightDownCell == null) ) { // we are at a leaf - no children exist
             System.out.println("--> We are at a leaf - level = " + this.level);
-            double toIncreaseCapacity ;
-            if (aboveCounter == -1) {
-                toIncreaseCapacity = 1 ;
-            }
-            else {
-                toIncreaseCapacity = aboveCounter ;
-            }
-            if (this.curCapacity + toIncreaseCapacity <= this.maxCapacity) { // if we have space for one/aboveCounter more keywords
-                System.out.println("--> We have space for one/aboveCounter more keywords");
-                this.curCapacity = this.curCapacity + toIncreaseCapacity ;
+
+            if (this.curCapacity + 1 <= this.maxCapacity) { // if we have space for one more keyword
+                System.out.println("--> We have space for one more keyword");
+                this.curCapacity++ ;
+                this.counterInsertion++ ;
 
                 if (hashC.containsKey(keyword)) { // keyword already exists at this leaf
                     System.out.println("--> We have it already: " + keyword);
                     hashValue temp_hashValue = hashC.get(keyword);
-                    if (aboveCounter == -1) { // keyword does NOT come from a split
-                        temp_hashValue.countersN[p]++;
-                    }
-                    else { // keyword comes from a split
-                        temp_hashValue.countersN[p] = aboveCounter ;
-                    }
-                    temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
+                    temp_hashValue.countersN[0]++;
                     hashC.put(keyword, temp_hashValue);
                 }
                 else { // new keyword
                     System.out.println("--> We add '" + keyword + "' to level " + this.level);
                     hashValue temp_hashValue = new hashValue(this.N);
-                    if (aboveCounter == -1) { // new keyword does NOT come from a split
-                        temp_hashValue.countersN[p] = 1 ;
-                    }
-                    else { // new keyword comes from a split
-                        temp_hashValue.countersN[p] = aboveCounter ;
-                    }
-                    temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
+                    temp_hashValue.countersN[0] = 1 ;
                     hashC.put(keyword, temp_hashValue);
                 }
             }
@@ -79,90 +69,34 @@ public class myCell {
                 double splitY = mbr.rightDown.latitude + ((mbr.leftUp.latitude - mbr.rightDown.latitude) / 2);
                 System.out.println("splits to: " + splitX + " - " + splitY);
 
-                // create the 4 new cells
-                System.out.println("--> We need to create leftUpCell");
-                this.leftUpCell = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
-                System.out.println("--> We need to create rightUpCell");
-                this.rightUpCell = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
-                System.out.println("--> We need to create leftDownCell");
-                this.leftDownCell = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
-                System.out.println("--> We need to create rightDownCell");
-                this.rightDownCell = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
-
-                // push old values to new cells
-                Set<String> keys = hashC.keySet();
-                int tempP ;
-                double approximateCounter ;
-                myPoint nullPoint = new myPoint(0,0) ;
-                for (String key : keys) {
-                    System.out.println("About to transfer keyword : " + key);
-                    hashValue temp_hashValue = hashC.get(key);
-                    for (int i = 0 ; i < this.N - 1 ; i++) {
-                        tempP = (i+p) % this.N ;
-                        approximateCounter = temp_hashValue.countersN[tempP] / 4 ;
-                        System.out.println("Transfer down to leftUpCell the keyword : " + key + " --> " + approximateCounter);
-                        (this.leftUpCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
-                        System.out.println("Transfer down to rightUpCell the keyword : " + key + " --> " + approximateCounter);
-                        (this.rightUpCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
-                        System.out.println("Transfer down to leftDownCell the keyword : " + key + " --> " + approximateCounter);
-                        (this.leftDownCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
-                        System.out.println("Transfer down to rightDownCell the keyword : " + key + " --> " + approximateCounter);
-                        (this.rightDownCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
-                    }
-                }
-
-                // add new keyword to the aggregate table
-                if (hashC.containsKey(keyword)) { // existed keyword
-                    System.out.println("--> We have it already: " + keyword);
-                    hashValue temp_hashValue = hashC.get(keyword);
-                    if (aboveCounter == -1) { // keyword does NOT come from a split
-                        System.out.println("-----------------------------------> H E R E - 1");
-                        temp_hashValue.countersN[p]++;
-                    }
-                    else { // keyword comes from a split - probably never come here
-                        System.out.println("-----------------------------------> H E R E - 2");
-                        temp_hashValue.countersN[p] = aboveCounter ;
-                    }
-                    //temp_hashValue.countersN[p]++;
-                    temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
-                    hashC.put(keyword, temp_hashValue);
-                }
-                else { // new keyword
-                    System.out.println("--> We add '" + keyword + "' to level " + this.level);
-                    hashValue temp_hashValue = new hashValue(this.N);
-                    if (aboveCounter == -1) { // new keyword does NOT come from a split
-                        System.out.println("-----------------------------------> H E R E - 3");
-                        temp_hashValue.countersN[p] = 1 ;
-                    }
-                    else { // new keyword comes from a split - probably never come here
-                        System.out.println("-----------------------------------> H E R E - 4");
-                        temp_hashValue.countersN[p] = aboveCounter ;
-                    }
-                    //temp_hashValue.countersN[p] = 1 ;
-                    temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
-                    hashC.put(keyword, temp_hashValue);
-                }
-
                 // push keyword to the appropriate child
                 System.out.println("--> We need to go down to level = " + (this.level+1));
                 //System.out.println(point.longitude + " - " + point.latitude);
 
-                // choose the correct child
+                // choose and create the correct child
                 if ((point.longitude < splitX) && (point.latitude >= splitY)) {
                     System.out.println("--> cellCase = 0");
-                    (this.leftUpCell).addKeyword(keyword, point, timestamp, p, aboveCounter);
+                    System.out.println("--> We need to create leftUpCell");
+                    this.leftUpCell = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
+                    (this.leftUpCell).addIndexingKeyword(keyword, point);
                 }
                 else if ((point.longitude >= splitX) && (point.latitude >= splitY)) {
                     System.out.println("--> cellCase = 1");
-                    (this.rightUpCell).addKeyword(keyword, point, timestamp, p, aboveCounter);
+                    System.out.println("--> We need to create rightUpCell");
+                    this.rightUpCell = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
+                    (this.rightUpCell).addIndexingKeyword(keyword, point);
                 }
                 else if ((point.longitude < splitX) && (point.latitude < splitY)) {
                     System.out.println("--> cellCase = 2");
-                    (this.leftDownCell).addKeyword(keyword, point, timestamp, p, aboveCounter);
+                    System.out.println("--> We need to create leftDownCell");
+                    this.leftDownCell = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
+                    (this.leftDownCell).addIndexingKeyword(keyword, point);
                 }
                 else if ((point.longitude >= splitX) && (point.latitude < splitY)) {
                     System.out.println("--> cellCase = 3");
-                    (this.rightDownCell).addKeyword(keyword, point, timestamp, p, aboveCounter);
+                    System.out.println("--> We need to create rightDownCell");
+                    this.rightDownCell = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
+                    (this.rightDownCell).addIndexingKeyword(keyword, point);
                 }
                 else {
                     System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
@@ -170,40 +104,8 @@ public class myCell {
             }
 
         }
-        else { // we are NOT at a leaf - all the 4 children exist
+        else { // we are NOT at a leaf - any of the 4 children exist
             System.out.println("--> We are NOT at a leaf - level = " + this.level);
-
-            // add keyword to the aggregate table
-            if (hashC.containsKey(keyword)) { // existed keyword
-                System.out.println("--> We have it already: " + keyword);
-                hashValue temp_hashValue = hashC.get(keyword);
-                if (aboveCounter == -1) { // keyword does NOT come from a split
-                    System.out.println("-----------------------------------> H E R E - 1.1");
-                    temp_hashValue.countersN[p]++;
-                }
-                else { // keyword comes from a split - probably never come here
-                    System.out.println("-----------------------------------> H E R E - 2.1");
-                    temp_hashValue.countersN[p] = aboveCounter ;
-                }
-                //temp_hashValue.countersN[p]++;
-                temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
-                hashC.put(keyword, temp_hashValue);
-            }
-            else { // new keyword
-                System.out.println("--> We add '" + keyword + "' to level " + this.level);
-                hashValue temp_hashValue = new hashValue(this.N);
-                if (aboveCounter == -1) { // new keyword does NOT come from a split
-                    System.out.println("-----------------------------------> H E R E - 3.1");
-                    temp_hashValue.countersN[p] = 1 ;
-                }
-                else { // new keyword comes from a split - probably never come here
-                    System.out.println("-----------------------------------> H E R E - 4.1");
-                    temp_hashValue.countersN[p] = aboveCounter ;
-                }
-                //temp_hashValue.countersN[p] = 1 ;
-                temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
-                hashC.put(keyword, temp_hashValue);
-            }
 
             // push keyword to the appropriate child
             System.out.println("--> We need to go down to level = " + (this.level+1));
@@ -211,30 +113,59 @@ public class myCell {
             double splitY = mbr.rightDown.latitude + ((mbr.leftUp.latitude - mbr.rightDown.latitude) / 2);
             System.out.println(point.longitude + " - " + point.latitude);
             System.out.println("splits to: " + splitX + " - " + splitY);
-            // choose the correct child
+
+            // choose and create the correct child
             if ((point.longitude < splitX) && (point.latitude >= splitY)) {
                 System.out.println("--> cellCase = 0");
-                (this.leftUpCell).addKeyword(keyword, point, timestamp, p, aboveCounter);
+                if (this.leftUpCell == null) {
+                    System.out.println("--> We need to create leftUpCell");
+                    this.leftUpCell = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
+                }
+                else { // to del
+                    System.out.println("--> We have leftUpCell");
+                }
+                (this.leftUpCell).addIndexingKeyword(keyword, point);
             }
             else if ((point.longitude >= splitX) && (point.latitude >= splitY)) {
                 System.out.println("--> cellCase = 1");
-                (this.rightUpCell).addKeyword(keyword, point, timestamp, p, aboveCounter);
+                if (this.rightUpCell == null) {
+                    System.out.println("--> We need to create rightUpCell");
+                    this.rightUpCell = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
+                }
+                else { // to del
+                    System.out.println("--> We have rightUpCell");
+                }
+                (this.rightUpCell).addIndexingKeyword(keyword, point);
             }
             else if ((point.longitude < splitX) && (point.latitude < splitY)) {
                 System.out.println("--> cellCase = 2");
-                (this.leftDownCell).addKeyword(keyword, point, timestamp, p, aboveCounter);
+                if (this.leftDownCell == null) {
+                    System.out.println("--> We need to create leftDownCell");
+                    this.leftDownCell = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
+                }
+                else { // to del
+                    System.out.println("--> We have leftDownCell");
+                }
+                (this.leftDownCell).addIndexingKeyword(keyword, point);
             }
             else if ((point.longitude >= splitX) && (point.latitude < splitY)) {
                 System.out.println("--> cellCase = 3");
-                (this.rightDownCell).addKeyword(keyword, point, timestamp, p, aboveCounter);
+                if (this.rightDownCell == null) {
+                    System.out.println("--> We need to create rightDownCell");
+                    this.rightDownCell = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
+                }
+                else { // to del
+                    System.out.println("--> We have rightDownCell");
+                }
+                (this.rightDownCell).addIndexingKeyword(keyword, point);
             }
             else {
                 System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
             }
         }
 
-        printCell();
-*/
+        printCellIndexing();
+
         return 0;
     }
 
@@ -254,8 +185,9 @@ public class myCell {
     }
 
 
-    void printCell() {
+    void printCellIndexing() {
         System.out.println("Print for level " + this.level);
+        System.out.println("Total insertions = " + this.counterInsertion);
         Set<String> keys = hashC.keySet() ;
         for (String key: keys) {
             hashValue temp = hashC.get(key) ;

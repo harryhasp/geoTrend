@@ -20,10 +20,10 @@ public class myGeoTrend {
         this.p = 0 ;
     }
 
-    public void newKeywordForIndexing (String keyword, myPoint point, long timestamp) {
+    public void newKeywordForIndexing (String keyword, myPoint point) {
         int ret ;
 
-        ret = firstCell.addIndexingKeyword(keyword, point,-1) ;
+        ret = firstCell.addIndexingKeyword(keyword, point) ;
 
         System.out.println("ret = " + ret) ;
 

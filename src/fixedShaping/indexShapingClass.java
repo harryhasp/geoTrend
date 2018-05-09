@@ -34,7 +34,7 @@ public class indexShapingClass {
                 myPoint newPoint = new myPoint(Double.parseDouble(lineList.get(1)), Double.parseDouble(lineList.get(2))) ;
                 long timestamp = Long.parseLong(lineList.get(0)) ;
 
-                geoTrend.newKeywordForIndexing(keyword, newPoint, timestamp) ;
+                geoTrend.newKeywordForIndexing(keyword, newPoint) ;
             }
             fileReader.close();
         }
