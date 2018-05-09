@@ -16,6 +16,8 @@ public class myCell {
     int N ;
     int T ; // T time units - number of time units that we keep data
     long lastTimestamp ;
+    double[] countersSum ;
+    int counterInsertion ;
 
     myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T) {
         System.out.println("myCell init - level = " + level) ;
@@ -30,6 +32,11 @@ public class myCell {
         this.T = T ;
         this.p = 0 ;
         this.lastTimestamp = 0 ;
+        this.countersSum = new double[N] ;
+        for (int i = 0 ; i < countersSum.length ; i++) {
+            this.countersSum[i] = 0.0 ;
+        }
+        this.counterInsertion = 0 ;
     }
 
     // TO DO : store timestamp, now zero everywhere
@@ -40,7 +47,6 @@ public class myCell {
 //        if ( ((timestamp - this.lastTimestamp) % this.T) > 0 ) {
 //            System.out.println("-----------------> We need to delete") ;
 //        }
-
 
         if (this.leftUpCell == null) { // we are at a leaf - no children exist
             System.out.println("--> We are at a leaf - level = " + this.level);
@@ -54,6 +60,8 @@ public class myCell {
             if (this.curCapacity + toIncreaseCapacity <= this.maxCapacity) { // if we have space for one/aboveCounter more keywords
                 System.out.println("--> We have space for one/aboveCounter more keywords");
                 this.curCapacity = this.curCapacity + toIncreaseCapacity ;
+                this.counterInsertion++ ;
+                this.countersSum[p] = this.countersSum[p] + toIncreaseCapacity ;
 
                 if (hashC.containsKey(keyword)) { // keyword already exists at this leaf
                     System.out.println("--> We have it already: " + keyword);
@@ -106,17 +114,23 @@ public class myCell {
                     hashValue temp_hashValue = hashC.get(key);
                     for (int i = 0 ; i < this.N - 1 ; i++) {
                         tempP = (i+p) % this.N ;
-                        approximateCounter = temp_hashValue.countersN[tempP] / 4 ;
-                        System.out.println("Transfer down to leftUpCell the keyword : " + key + " --> " + approximateCounter);
-                        (this.leftUpCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
-                        System.out.println("Transfer down to rightUpCell the keyword : " + key + " --> " + approximateCounter);
-                        (this.rightUpCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
-                        System.out.println("Transfer down to leftDownCell the keyword : " + key + " --> " + approximateCounter);
-                        (this.leftDownCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
-                        System.out.println("Transfer down to rightDownCell the keyword : " + key + " --> " + approximateCounter);
-                        (this.rightDownCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
+                        if (temp_hashValue.countersN[tempP] > 0.0) {
+                            approximateCounter = temp_hashValue.countersN[tempP] / 4 ;
+                            System.out.println("Transfer down to leftUpCell the keyword : " + key + " --> " + approximateCounter);
+                            (this.leftUpCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
+                            System.out.println("Transfer down to rightUpCell the keyword : " + key + " --> " + approximateCounter);
+                            (this.rightUpCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
+                            System.out.println("Transfer down to leftDownCell the keyword : " + key + " --> " + approximateCounter);
+                            (this.leftDownCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
+                            System.out.println("Transfer down to rightDownCell the keyword : " + key + " --> " + approximateCounter);
+                            (this.rightDownCell).addKeyword(key, nullPoint, timestamp, tempP, approximateCounter);
+                        }
                     }
                 }
+
+                // increase variables for the new keyword which initially goes to the aggregate table
+                this.counterInsertion++ ;
+                this.countersSum[p]++ ; // because we never go to 2 and 4 - in case we found that it goes, make it with if/else and increase accordingly
 
                 // add new keyword to the aggregate table
                 if (hashC.containsKey(keyword)) { // existed keyword
@@ -179,6 +193,10 @@ public class myCell {
         }
         else { // we are NOT at a leaf - all the 4 children exist
             System.out.println("--> We are NOT at a leaf - level = " + this.level);
+
+            // increase variables for the new keyword which initially goes to the aggregate table
+            this.counterInsertion++ ;
+            this.countersSum[p]++ ; // because we never go to 2.1 and 4.1 - in case we found that it goes, make it with if/else and increase accordingly
 
             // add keyword to the aggregate table
             if (hashC.containsKey(keyword)) { // existed keyword
@@ -263,6 +281,10 @@ public class myCell {
 
     void printCell() {
         System.out.println("Print for level " + this.level);
+        System.out.println("Total insertions = " + this.counterInsertion);
+        for (int i = 0 ; i < this.countersSum.length ; i++) {
+            System.out.println("countersSum at " + i + " = " + this.countersSum[i]);
+        }
         Set<String> keys = hashC.keySet() ;
         for (String key: keys) {
             hashValue temp = hashC.get(key) ;

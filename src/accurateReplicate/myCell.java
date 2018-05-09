@@ -16,6 +16,9 @@ public class myCell {
     int N ;
     int T ; // T time units - number of time units that we keep data
     long lastTimestamp ;
+    int[] countersSum ;
+    int counterInsertion ;
+
 
     myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T) {
         System.out.println("myCell init - level = " + level) ;
@@ -30,6 +33,11 @@ public class myCell {
         this.T = T ;
         this.p = 0 ;
         this.lastTimestamp = 0 ;
+        this.countersSum = new int[N] ;
+        for (int i = 0 ; i < countersSum.length ; i++) {
+            this.countersSum[i] = 0 ;
+        }
+        this.counterInsertion = 0 ;
     }
 
     // TO DO : store timestamp, now zero everywhere
@@ -46,6 +54,8 @@ public class myCell {
             if (this.curCapacity + 1 <= this.maxCapacity) { // if we have space for one more keyword
                 System.out.println("--> We have space for one more keyword");
                 this.curCapacity++ ;
+                this.counterInsertion++ ;
+                this.countersSum[p]++ ;
 
                 if (hashC.containsKey(keyword)) { // keyword already exists at this leaf
                     System.out.println("--> We have it already: " + keyword);
@@ -58,8 +68,8 @@ public class myCell {
                 else { // new keyword
                     System.out.println("--> We add '" + keyword + "' to level " + this.level);
                     hashValue temp_hashValue = new hashValue(this.N);
-                    temp_hashValue.locations[p].add(point) ;
                     temp_hashValue.countersN[p] = 1 ;
+                    temp_hashValue.locations[p].add(point) ;
                     //temp_hashValue.trend = (6*(N-1)) / (N*(N+1)*(2*N+1)) ;
                     hashC.put(keyword, temp_hashValue);
                 }
@@ -116,6 +126,10 @@ public class myCell {
                     hashC.replace(key, temp_hashValue) ;
                 }
 
+                // increase variables for the new keyword which initially goes to the aggregate table
+                this.counterInsertion++ ;
+                this.countersSum[p]++ ;
+
                 // add new keyword to the aggregate table
                 if (hashC.containsKey(keyword)) { // existed keyword
                     System.out.println("--> We have it already: " + keyword);
@@ -163,6 +177,10 @@ public class myCell {
         }
         else { // we are NOT at a leaf - all the 4 children exist
             System.out.println("--> We are NOT at a leaf - level = " + this.level);
+
+            // increase variables for the new keyword which initially goes to the aggregate table
+            this.counterInsertion++ ;
+            this.countersSum[p]++ ;
 
             // add keyword to the aggregate table
             if (hashC.containsKey(keyword)) { // existed keyword
@@ -232,6 +250,10 @@ public class myCell {
 
     void printCell() {
         System.out.println("Print for level " + this.level);
+        System.out.println("Total insertions = " + this.counterInsertion);
+        for (int i = 0 ; i < this.countersSum.length ; i++) {
+            System.out.println("countersSum at " + i + " = " + this.countersSum[i]);
+        }
         Set<String> keys = hashC.keySet() ;
         for (String key: keys) {
             hashValue temp = hashC.get(key) ;

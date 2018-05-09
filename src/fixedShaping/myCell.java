@@ -34,7 +34,7 @@ public class myCell {
 
     // TO DO :
     int addIndexingKeyword (String keyword, myPoint point, double aboveCounter) {
-
+/*
         if (this.leftUpCell == null) { // we are at a leaf - no children exist
             System.out.println("--> We are at a leaf - level = " + this.level);
             double toIncreaseCapacity ;
@@ -234,7 +234,7 @@ public class myCell {
         }
 
         printCell();
-
+*/
         return 0;
     }
 
