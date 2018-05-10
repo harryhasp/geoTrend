@@ -38,4 +38,22 @@ public class myGeoTrend {
         firstCell.clearCellData() ;
     }
 
+    public void newKeyword (String keyword, myPoint point, long timestamp) {
+        int ret ;
+
+        p = (int) ( (timestamp / (T/N)) % N) ;
+        p = N - 1 - p ;
+        System.out.println("-------------> p = " + p);
+
+        ret = firstCell.addKeyword(keyword, point, timestamp, p) ;
+
+        System.out.println("ret = " + ret) ;
+
+        System.out.println("-----------------------------------------------------------");
+
+//        System.out.println("----------------------------------------- printCell - start");
+//        firstCell.printCell() ;
+//        System.out.println("----------------------------------------- printCell - end");
+    }
+
 }

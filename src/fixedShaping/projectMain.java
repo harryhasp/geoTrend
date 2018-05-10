@@ -14,6 +14,9 @@ public class projectMain {
 
         indexShapingClass indexShape = new indexShapingClass() ;
         indexShape.insertKeywords(geoTrend, sampleDataFile) ;
+
+        insertKeywordsClass insertKeywords = new insertKeywordsClass() ;
+        insertKeywords.insertKeywords(geoTrend, sampleDataFile);
     }
 
 }
