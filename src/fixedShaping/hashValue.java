@@ -1,9 +1,9 @@
 package fixedShaping;
 
-public class hashValue {
+class hashValue {
 
     //int n = 3 ;
-    int N ;
+    private int N ;
     double[] countersN ;
     double trend ;
 

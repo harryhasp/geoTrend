@@ -2,13 +2,13 @@ package fixedShaping;
 
 public class myGeoTrend {
 
-    int depth ;
-    myCell firstCell ;
-    int k ;
-    int N ; // N counters - T/N
-    int T ; // T time units - number of time units that we keep data
-    int timer ;
-    int p ; // pointer
+    private int depth ;
+    private myCell firstCell ;
+    private int k ;
+    private int N ; // N counters - T/N
+    private int T ; // T time units - number of time units that we keep data
+    private int timer ;
+    private int p ; // pointer
 
     myGeoTrend(int k, int N, int T) {
         this.depth = 1 ;
@@ -20,7 +20,7 @@ public class myGeoTrend {
         this.p = 0 ;
     }
 
-    public void newKeywordForIndexing (String keyword, myPoint point) {
+    void newKeywordForIndexing (String keyword, myPoint point) {
         int ret ;
 
         ret = firstCell.addIndexingKeyword(keyword, point) ;
@@ -34,11 +34,11 @@ public class myGeoTrend {
 //        System.out.println("----------------------------------------- printCell - end");
     }
 
-    public void clearIndex () {
+    void clearIndex () {
         firstCell.clearCellData() ;
     }
 
-    public void newKeyword (String keyword, myPoint point, long timestamp) {
+    void newKeyword (String keyword, myPoint point, long timestamp) {
         int ret ;
 
         p = (int) ( (timestamp / (T/N)) % N) ;

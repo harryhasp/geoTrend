@@ -8,9 +8,9 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class indexShapingClass {
+class indexShapingClass {
 
-    public void insertKeywords(myGeoTrend geoTrend, String sampleDataFile) {
+    void insertKeywords(myGeoTrend geoTrend, String sampleDataFile) {
 
         int timer = 0 ;
 
@@ -23,8 +23,8 @@ public class indexShapingClass {
             String line ;
             while ((line = bufferedReader.readLine()) != null) {
                 List<String> lineList = Arrays.asList(line.split(",")) ;
-                for (int i = 0 ; i < lineList.size() ; i++) {
-                    System.out.print(lineList.get(i) + " <> ") ;
+                for (String s : lineList) {
+                    System.out.print(s + " <> ") ;
                 }
                 System.out.println() ;
 

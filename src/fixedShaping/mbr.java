@@ -1,7 +1,7 @@
 package fixedShaping;
 
 
-public class mbr {
+class mbr {
 
     myPoint leftUp ;
     myPoint rightDown ;
