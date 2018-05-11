@@ -15,7 +15,7 @@ class myCell {
     private int k ;
     private int N ;
     private int T ; // T time units - number of time units that we keep data
-    private long lastTimestamp ;
+    private long lastInsertTimestamp ;
     private double[] countersSum ;
     private int counterInsertion ;
 
@@ -30,8 +30,8 @@ class myCell {
         this.k = k ;
         this.N = N ;
         this.T = T ;
-        this.p = 0 ;
-        this.lastTimestamp = 0 ;
+        this.p = N-1 ;
+        this.lastInsertTimestamp = 0 ;
         this.countersSum = new double[N] ;
         for (int i = 0 ; i < countersSum.length ; i++) {
             this.countersSum[i] = 0.0 ;
@@ -42,7 +42,7 @@ class myCell {
     // TO DO : store timestamp, now zero everywhere
     int addKeyword (String keyword, myPoint point, long timestamp, int p, double aboveCounter) {
 
-        this.p = p ;
+        //this.p = p ;
 
 //        if ( ((timestamp - this.lastTimestamp) % this.T) > 0 ) {
 //            System.out.println("-----------------> We need to delete") ;
@@ -257,6 +257,19 @@ class myCell {
                 System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
             }
         }
+
+        // update Trend values if we are in a new p (not as value)
+        if ( (this.p != p) || (timestamp - this.lastInsertTimestamp > this.T/this.N) ) {
+            System.out.println("--> We update the Trend values");
+            Set<String> keys = hashC.keySet() ;
+            for (String key : keys) {
+                hashValue temp_hashValue = hashC.get(key) ;
+                temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
+                hashC.put(key, temp_hashValue) ;
+            }
+        }
+        this.p = p ;
+        this.lastInsertTimestamp = timestamp ;
 
         printCell();
 

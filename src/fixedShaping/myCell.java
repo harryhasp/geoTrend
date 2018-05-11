@@ -31,7 +31,7 @@ class myCell {
         this.k = k ;
         this.N = N ;
         this.T = T ;
-        this.p = 0 ;
+        this.p = N-1 ;
         this.lastInsertTimestamp = 0 ;
         this.countersSum = new int[N] ;
         Arrays.fill(countersSum, 0);
@@ -231,6 +231,7 @@ class myCell {
             }
         }
         this.p = p ;
+        this.lastInsertTimestamp = timestamp ;
 
         // push keyword to the appropriate child if it exists
         double splitX = mbr.leftUp.longitude + ((mbr.rightDown.longitude - mbr.leftUp.longitude) / 2);

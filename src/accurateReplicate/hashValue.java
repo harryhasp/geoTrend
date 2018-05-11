@@ -3,17 +3,17 @@ package accurateReplicate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class hashValue {
+class hashValue {
 
     //int n = 3 ;
-    int N ;
+    //private int N ;
     int[] countersN ;
     double trend ;
     List<myPoint>[] locations ;
     // list of lists for locations. First list size of n (T/N)
 
     hashValue(int N) {
-        this.N = N ;
+        //this.N = N ;
         this.countersN = new int[N] ;
         for (int i = 0 ; i < (this.countersN).length ; i++) {
             (this.countersN)[i] = 0 ;

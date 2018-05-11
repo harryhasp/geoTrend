@@ -3,21 +3,21 @@ package accurateReplicate;
 import java.util.Hashtable;
 import java.util.Set;
 
-public class myCell {
+class myCell {
 
-    int maxCapacity ;
-    int curCapacity ;
-    int p ;
-    mbr mbr ;
-    Hashtable<String, hashValue> hashC ;
-    int level ;
-    myCell leftUpCell, leftDownCell, rightUpCell, rightDownCell;
-    int k ;
-    int N ;
-    int T ; // T time units - number of time units that we keep data
-    long lastTimestamp ;
-    int[] countersSum ;
-    int counterInsertion ;
+    private int maxCapacity ;
+    private int curCapacity ;
+    private int p ;
+    private mbr mbr ;
+    private Hashtable<String, hashValue> hashC ;
+    private int level ;
+    private myCell leftUpCell, leftDownCell, rightUpCell, rightDownCell;
+    private int k ;
+    private int N ;
+    private int T ; // T time units - number of time units that we keep data
+    private long lastInsertTimestamp ;
+    private int[] countersSum ;
+    private int counterInsertion ;
 
 
     myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T) {
@@ -31,8 +31,8 @@ public class myCell {
         this.k = k ;
         this.N = N ;
         this.T = T ;
-        this.p = 0 ;
-        this.lastTimestamp = 0 ;
+        this.p = N-1 ;
+        this.lastInsertTimestamp = 0 ;
         this.countersSum = new int[N] ;
         for (int i = 0 ; i < countersSum.length ; i++) {
             this.countersSum[i] = 0 ;
@@ -43,7 +43,7 @@ public class myCell {
     // TO DO : store timestamp, now zero everywhere
     int addKeyword (String keyword, myPoint point, long timestamp, int p) {
 
-        this.p = p ;
+        //this.p = p ;
 
 //        if ( ((timestamp - this.lastTimestamp) % this.T) > 0 ) {
 //            System.out.println("-----------------> We need to delete") ;
@@ -227,13 +227,27 @@ public class myCell {
                 System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
             }
         }
+
+        // update Trend values if we are in a new p (not as value)
+        if ( (this.p != p) || (timestamp - this.lastInsertTimestamp > this.T/this.N) ) {
+            System.out.println("--> We update the Trend values");
+            Set<String> keys = hashC.keySet() ;
+            for (String key : keys) {
+                hashValue temp_hashValue = hashC.get(key) ;
+                temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
+                hashC.put(key, temp_hashValue) ;
+            }
+        }
+        this.p = p ;
+        this.lastInsertTimestamp = timestamp ;
+
         printCell();
 
         return 0;
     }
 
 
-    double trendCalculation(int p, int[] countersN) {
+    private double trendCalculation(int p, int[] countersN) {
         int down = N*(N+1)*(2*N+1) ;
         int up = 0 ;
         int cO = (p+N-1)%N ;
@@ -248,7 +262,7 @@ public class myCell {
     }
 
 
-    void printCell() {
+    private void printCell() {
         System.out.println("Print for level " + this.level);
         System.out.println("Total insertions = " + this.counterInsertion);
         for (int i = 0 ; i < this.countersSum.length ; i++) {

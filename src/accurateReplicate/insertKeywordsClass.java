@@ -3,23 +3,22 @@ package accurateReplicate;
 import java.io.* ;
 import java.util.* ;
 
-public class insertKeywordsClass {
+class insertKeywordsClass {
 
-    public void insertKeywords(myGeoTrend geoTrend, String sampleDataFile) {
+    void insertKeywords(myGeoTrend geoTrend, String sampleDataFile) {
 
-        int timer = 0 ;
+        //int timer = 0 ;
 
         try {
             File file = new File(sampleDataFile) ;
-            FileReader fileReader = null ;
-            fileReader = new FileReader(file) ;
+            FileReader fileReader = new FileReader(file) ;
             BufferedReader bufferedReader = new BufferedReader(fileReader) ;
 
             String line ;
             while ((line = bufferedReader.readLine()) != null) {
                 List<String> lineList = Arrays.asList(line.split(",")) ;
-                for (int i = 0 ; i < lineList.size() ; i++) {
-                    System.out.print(lineList.get(i) + " <> ") ;
+                for (String s : lineList) {
+                    System.out.print(s + " <> ") ;
                 }
                 System.out.println() ;
 
