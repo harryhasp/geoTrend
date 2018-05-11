@@ -15,6 +15,10 @@ public class projectMain {
         indexShapingClass indexShape = new indexShapingClass() ;
         indexShape.insertKeywords(geoTrend, sampleDataFile) ;
 
+        System.out.println();
+        System.out.println("--------------------> Finish index creation - Start real data <--------------------");
+        System.out.println();
+
         insertKeywordsClass insertKeywords = new insertKeywordsClass() ;
         insertKeywords.insertKeywords(geoTrend, sampleDataFile);
     }
