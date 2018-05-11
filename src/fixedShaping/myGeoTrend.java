@@ -2,21 +2,21 @@ package fixedShaping;
 
 public class myGeoTrend {
 
-    private int depth ;
+    //private int depth ;
     private myCell firstCell ;
-    private int k ;
+    //private int k ;
     private int N ; // N counters - T/N
     private int T ; // T time units - number of time units that we keep data
-    private int timer ;
+    //private int timer ;
     private int p ; // pointer
 
     myGeoTrend(int k, int N, int T) {
-        this.depth = 1 ;
+        //this.depth = 1 ;
         this.firstCell = new myCell(-180.0, 180.0, -90.0, 90.0, 0, k, N, T) ;
-        this.k = k ;
+        //this.k = k ;
         this.N = N ;
         this.T = T ;
-        this.timer = 0 ;
+        //this.timer = 0 ;
         this.p = 0 ;
     }
 

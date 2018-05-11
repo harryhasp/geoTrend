@@ -12,12 +12,11 @@ class insertKeywordsClass {
 
     void insertKeywords(myGeoTrend geoTrend, String sampleDataFile) {
 
-        int timer = 0 ;
+        //int timer = 0 ;
 
         try {
             File file = new File(sampleDataFile) ;
-            FileReader fileReader = null ;
-            fileReader = new FileReader(file) ;
+            FileReader fileReader = new FileReader(file) ;
             BufferedReader bufferedReader = new BufferedReader(fileReader) ;
 
             String line ;

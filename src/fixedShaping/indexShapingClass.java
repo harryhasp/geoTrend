@@ -12,12 +12,11 @@ class indexShapingClass {
 
     void insertKeywords(myGeoTrend geoTrend, String sampleDataFile) {
 
-        int timer = 0 ;
+        //int timer = 0 ;
 
         try {
             File file = new File(sampleDataFile) ;
-            FileReader fileReader = null ;
-            fileReader = new FileReader(file) ;
+            FileReader fileReader = new FileReader(file) ;
             BufferedReader bufferedReader = new BufferedReader(fileReader) ;
 
             String line ;
@@ -32,7 +31,7 @@ class indexShapingClass {
                 //double longitude = Double.parseDouble(lineList.get(1)) ;
                 //double latitude = Double.parseDouble(lineList.get(2)) ;
                 myPoint newPoint = new myPoint(Double.parseDouble(lineList.get(1)), Double.parseDouble(lineList.get(2))) ;
-                long timestamp = Long.parseLong(lineList.get(0)) ;
+                //long timestamp = Long.parseLong(lineList.get(0)) ;
 
                 geoTrend.newKeywordForIndexing(keyword, newPoint) ;
             }
