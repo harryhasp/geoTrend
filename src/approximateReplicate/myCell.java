@@ -3,21 +3,21 @@ package approximateReplicate;
 import java.util.Hashtable;
 import java.util.Set;
 
-public class myCell {
+class myCell {
 
-    double maxCapacity ;
-    double curCapacity ;
-    int p ;
-    approximateReplicate.mbr mbr ;
-    Hashtable<String, hashValue> hashC ;
-    int level ;
-    myCell leftUpCell, leftDownCell, rightUpCell, rightDownCell;
-    int k ;
-    int N ;
-    int T ; // T time units - number of time units that we keep data
-    long lastTimestamp ;
-    double[] countersSum ;
-    int counterInsertion ;
+    private double maxCapacity ;
+    private double curCapacity ;
+    private int p ;
+    private mbr mbr ;
+    private Hashtable<String, hashValue> hashC ;
+    private int level ;
+    private myCell leftUpCell, leftDownCell, rightUpCell, rightDownCell;
+    private int k ;
+    private int N ;
+    private int T ; // T time units - number of time units that we keep data
+    private long lastTimestamp ;
+    private double[] countersSum ;
+    private int counterInsertion ;
 
     myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T) {
         System.out.println("myCell init - level = " + level) ;
@@ -264,7 +264,7 @@ public class myCell {
     }
 
 
-    double trendCalculation(int p, double[] countersN) {
+    private double trendCalculation(int p, double[] countersN) {
         int down = N*(N+1)*(2*N+1) ;
         double up = 0.0 ;
         int cO = (p+N-1)%N ;
@@ -279,7 +279,7 @@ public class myCell {
     }
 
 
-    void printCell() {
+    private void printCell() {
         System.out.println("Print for level " + this.level);
         System.out.println("Total insertions = " + this.counterInsertion);
         for (int i = 0 ; i < this.countersSum.length ; i++) {

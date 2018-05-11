@@ -1,14 +1,14 @@
 package approximateReplicate;
 
-public class hashValue {
+class hashValue {
 
     //int n = 3 ;
-    int N ;
+    //private int N ;
     double[] countersN ;
     double trend ;
 
     hashValue(int N) {
-        this.N = N ;
+        //this.N = N ;
         this.countersN = new double[N] ;
         for (int i = 0 ; i < (this.countersN).length ; i++) {
             (this.countersN)[i] = 0.0 ;

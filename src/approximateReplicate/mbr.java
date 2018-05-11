@@ -1,6 +1,6 @@
 package approximateReplicate;
 
-public class mbr {
+class mbr {
 
     myPoint leftUp ;
     myPoint rightDown ;
