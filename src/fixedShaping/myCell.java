@@ -1,8 +1,6 @@
 package fixedShaping;
 
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Set;
+import java.util.*;
 
 class myCell {
 
@@ -19,6 +17,8 @@ class myCell {
     private long lastInsertTimestamp ;
     private int[] countersSum ;
     private int counterInsertion ;
+    private List<topKNode> topKList ;
+
 
     myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T) {
         System.out.println("myCell init - level = " + level) ;
@@ -36,6 +36,7 @@ class myCell {
         this.countersSum = new int[N] ;
         Arrays.fill(countersSum, 0);
         this.counterInsertion = 0 ;
+        this.topKList = new LinkedList<>() ;
     }
 
     // TO DO :
@@ -229,6 +230,13 @@ class myCell {
                 temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                 hashC.put(key, temp_hashValue) ;
             }
+            topKList.clear();
+            for (String key : keys) {
+                updateTopKList(new topKNode(key, hashC.get(key).trend));
+            }
+        }
+        else {
+            updateTopKList(new topKNode(keyword, hashC.get(keyword).trend));
         }
         this.p = p ;
         this.lastInsertTimestamp = timestamp ;
@@ -279,6 +287,42 @@ class myCell {
     }
 
 
+    private void updateTopKList(topKNode newNode) {
+        if (topKList.size() < k) {
+            topKList.add(newNode) ;
+        }
+        else {
+            boolean found = false ;
+            for (topKNode t : topKList) {
+                if ((t.keyword).equals(newNode.keyword)) {
+                    t.trendValue = newNode.trendValue ;
+                    found = true ;
+                }
+            }
+            if (!found) {
+                topKList.remove(topKList.size()-1) ;
+                topKList.add(newNode) ;
+            }
+        }
+        topKListSorting();
+    }
+
+    private void topKListSorting () {
+        topKList.sort(new Comparator<topKNode>() {
+            @Override
+            public int compare(topKNode o1, topKNode o2) {
+                if(o1.trendValue < o2.trendValue){
+                    return 1;
+                } else if (o1.trendValue > o2.trendValue) {
+                    return -1;
+                } else {
+                    return 0 ;
+                }
+            }
+        });
+    }
+
+
     private void printCellIndexing() {
         System.out.println("Print for level " + this.level);
         System.out.println("Total insertions = " + this.counterInsertion);
@@ -294,7 +338,7 @@ class myCell {
 
 
     private void printCell() {
-        System.out.println("Print for level " + this.level);
+        System.out.println("@@> Print for level " + this.level);
         System.out.println("Total insertions = " + this.counterInsertion);
         for (int i = 0 ; i < this.countersSum.length ; i++) {
             System.out.println("countersSum at " + i + " = " + this.countersSum[i]);
@@ -306,6 +350,12 @@ class myCell {
             for (int i = 0 ; i < temp.countersN.length ; i++) {
                 System.out.println("counter = " + temp.countersN[i]);
             }
+        }
+        System.out.println("##> Printing topK Trend table");
+        int counter = 1 ;
+        for (topKNode t : topKList) {
+            System.out.println(counter + ". " + t.keyword + " - " + t.trendValue);
+            counter++ ;
         }
     }
 
