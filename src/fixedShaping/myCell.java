@@ -309,6 +309,11 @@ class myCell {
             this.countersSum[newC] = 0 ;
             //this.pExp-- ;
         }
+        topKList.clear();
+        Set<String> keys = hashC.keySet() ;
+        for (String key : keys) {
+            updateTopKList(new topKNode(key, hashC.get(key).trend));
+        }
         System.out.println("eventually this.pExp = " + this.pExp);
 
         this.lastExpirationTimestamp = this.lastExpirationTimestamp + nc * (T/N) ;
@@ -404,6 +409,7 @@ class myCell {
             System.out.println(counter + ". " + t.keyword + " - " + t.trendValue);
             counter++ ;
         }
+        System.out.println("this.p = " + this.p);
         System.out.println("this.pExp = " + this.pExp);
     }
 

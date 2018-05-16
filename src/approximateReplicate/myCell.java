@@ -118,7 +118,7 @@ class myCell {
                 for (String key : keys) {
                     System.out.println("About to transfer keyword : " + key);
                     hashValue temp_hashValue = hashC.get(key);
-                    for (int i = 0 ; i < this.N - 1 ; i++) {
+                    for (int i = 0 ; i < this.N ; i++) {
                         tempP = (i+p) % this.N ;
                         if (temp_hashValue.countersN[tempP] > 0.0) {
                             approximateCounter = temp_hashValue.countersN[tempP] / 4 ;
@@ -321,6 +321,11 @@ class myCell {
             this.countersSum[newC] = 0 ;
             //this.pExp-- ;
         }
+        topKList.clear();
+        Set<String> keys = hashC.keySet() ;
+        for (String key : keys) {
+            updateTopKList(new topKNode(key, hashC.get(key).trend));
+        }
         System.out.println("eventually this.pExp = " + this.pExp);
 
         this.lastExpirationTimestamp = this.lastExpirationTimestamp + nc * (T/N) ;
@@ -402,6 +407,7 @@ class myCell {
             System.out.println(counter + ". " + t.keyword + " - " + t.trendValue);
             counter++ ;
         }
+        System.out.println("this.p = " + this.p);
         System.out.println("this.pExp = " + this.pExp);
     }
 

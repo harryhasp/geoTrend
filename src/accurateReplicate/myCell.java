@@ -100,7 +100,7 @@ class myCell {
                 for (String key : keys) {
                     System.out.println("About to transfer keyword : " + key);
                     hashValue temp_hashValue = hashC.get(key);
-                    for (int i = 0 ; i < this.N - 1 ; i++) {
+                    for (int i = 0 ; i < this.N ; i++) {
                         int tempP = (i+p) % this.N ;
                         for (int j = 0; j < temp_hashValue.locations[tempP].size(); j++) {
                             if ((temp_hashValue.locations[tempP].get(j).longitude < splitX) && (temp_hashValue.locations[tempP].get(j).latitude >= splitY)) {
@@ -124,10 +124,10 @@ class myCell {
                             }
                         }
                         temp_hashValue.locations[tempP].clear();
-                        System.out.println("--> Size = " + temp_hashValue.locations[tempP].size()); // test - to Delete
+                        System.out.println("--> Size 1 = " + temp_hashValue.locations[tempP].size()); // test - to Delete
                     }
-                    temp_hashValue.locations[(N-1+p)%N].clear(); // delete locations of the oldest counter
-                    System.out.println("--> Size = " + temp_hashValue.locations[(N-1+p)%N].size()); // test - to Delete
+                    //temp_hashValue.locations[(N-1+p)%N].clear(); // delete locations of the oldest counter
+                    System.out.println("--> Size 2 = " + temp_hashValue.locations[(N-1+p)%N].size()); // test - to Delete
                     hashC.replace(key, temp_hashValue) ;
                 }
 
@@ -292,6 +292,11 @@ class myCell {
             this.countersSum[newC] = 0 ;
             //this.pExp-- ;
         }
+        topKList.clear();
+        Set<String> keys = hashC.keySet() ;
+        for (String key : keys) {
+            updateTopKList(new topKNode(key, hashC.get(key).trend));
+        }
         System.out.println("eventually this.pExp = " + this.pExp);
 
         this.lastExpirationTimestamp = this.lastExpirationTimestamp + nc * (T/N) ;
@@ -377,6 +382,7 @@ class myCell {
             System.out.println(counter + ". " + t.keyword + " - " + t.trendValue);
             counter++ ;
         }
+        System.out.println("this.p = " + this.p);
         System.out.println("this.pExp = " + this.pExp);
     }
 
