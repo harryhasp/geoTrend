@@ -7,6 +7,7 @@ class myCell {
     private double maxCapacity ;
     private double curCapacity ;
     private int p ;
+    private int pExp ;
     private mbr mbr ;
     private Hashtable<String, hashValue> hashC ;
     private int level ;
@@ -18,6 +19,7 @@ class myCell {
     private int[] countersSum ;
     private int counterInsertion ;
     private List<topKNode> topKList ;
+    private long lastExpirationTimestamp ;
 
 
     myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T) {
@@ -32,11 +34,13 @@ class myCell {
         this.N = N ;
         this.T = T ;
         this.p = N-1 ;
+        this.pExp = N-1 ;
         this.lastInsertTimestamp = 0 ;
         this.countersSum = new int[N] ;
         Arrays.fill(countersSum, 0);
         this.counterInsertion = 0 ;
         this.topKList = new LinkedList<>() ;
+        this.lastExpirationTimestamp = 0 ;
     }
 
     // TO DO :
@@ -203,6 +207,8 @@ class myCell {
 //            System.out.println("-----------------> We need to delete") ;
 //        }
 
+        lazyExpiration(timestamp) ;
+
         this.counterInsertion++ ;
         this.countersSum[p]++ ;
 
@@ -239,6 +245,7 @@ class myCell {
             updateTopKList(new topKNode(keyword, hashC.get(keyword).trend));
         }
         this.p = p ;
+        //this.pExp = p ;
         this.lastInsertTimestamp = timestamp ;
 
         // push keyword to the appropriate child if it exists
@@ -269,6 +276,46 @@ class myCell {
         printCell();
 
         return 0;
+    }
+
+
+    private void lazyExpiration(long timestamp) {
+        System.out.println("&&> We are at lazyExpiration for level " + this.level + " with this.pExp " + this.pExp);
+        int nc = (int) Math.floor((timestamp - this.lastExpirationTimestamp)/(T/N)) ;
+        System.out.println("nc = " + nc);
+
+        if (nc > N) {
+            nc = N ;
+        }
+
+        for (int i = 0 ; i < nc ; i++) {
+            System.out.println("&&> Inside the for loop");
+            int newC = --this.pExp ;
+            System.out.println("init newC = " + newC);
+            if (newC == -1) {
+                newC = N - 1 ;
+                this.pExp = N - 1 ;
+            }
+            else if (newC < -1) {
+                System.out.println("--> PROBLEM on lazyExpiration");
+            }
+            System.out.println("for newC = " + newC);
+            Set<String> keys = hashC.keySet() ;
+            for (String key : keys) {
+                hashValue temp_hashValue = hashC.get(key) ;
+                temp_hashValue.countersN[newC] = 0 ;
+                hashC.put(key, temp_hashValue) ;
+            }
+            this.countersSum[newC] = 0 ;
+            //this.pExp-- ;
+        }
+        System.out.println("eventually this.pExp = " + this.pExp);
+
+        this.lastExpirationTimestamp = this.lastExpirationTimestamp + nc * (T/N) ;
+
+        System.out.println("Print for LAZY");
+        printCell();
+        System.out.println("- - -");
     }
 
 
@@ -357,6 +404,7 @@ class myCell {
             System.out.println(counter + ". " + t.keyword + " - " + t.trendValue);
             counter++ ;
         }
+        System.out.println("this.pExp = " + this.pExp);
     }
 
 }
