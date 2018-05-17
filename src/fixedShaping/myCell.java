@@ -340,21 +340,19 @@ class myCell {
 
 
     private void updateTopKList(topKNode newNode) {
-        if (topKList.size() < k) {
+        boolean found = false ;
+        for (topKNode t : topKList) {
+            if ((t.keyword).equals(newNode.keyword)) {
+                t.trendValue = newNode.trendValue ;
+                found = true ;
+            }
+        }
+        if ( (topKList.size() < k) && (!found) ) {
             topKList.add(newNode) ;
         }
-        else {
-            boolean found = false ;
-            for (topKNode t : topKList) {
-                if ((t.keyword).equals(newNode.keyword)) {
-                    t.trendValue = newNode.trendValue ;
-                    found = true ;
-                }
-            }
-            if (!found) {
-                topKList.remove(topKList.size()-1) ;
-                topKList.add(newNode) ;
-            }
+        else if (!found) {
+            topKList.remove(topKList.size()-1) ;
+            topKList.add(newNode) ;
         }
         topKListSorting();
     }

@@ -24,7 +24,7 @@ class myCell {
 
     myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T) {
         System.out.println("myCell init - level = " + level) ;
-        this.maxCapacity = 4 ;
+        this.maxCapacity = 8 ;
         this.curCapacity = 0 ;
         this.mbr = new mbr(minX, maxX, minY, maxY) ;
         this.hashC = new Hashtable<>() ;
@@ -137,24 +137,45 @@ class myCell {
                     for (int i = 0 ; i < this.N ; i++) {
                         int tempP = (i+p) % this.N ;
                         for (int j = 0; j < temp_hashValue.locations[tempP].size(); j++) {
-                            if ((temp_hashValue.locations[tempP].get(j).longitude < splitX) && (temp_hashValue.locations[tempP].get(j).latitude >= splitY)) {
-                                System.out.println("Transfer down to leftUpCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).longitude + " - " + temp_hashValue.locations[tempP].get(j).latitude);
-                                (this.leftUpCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
-                            }
-                            else if ((temp_hashValue.locations[tempP].get(j).longitude >= splitX) && (temp_hashValue.locations[tempP].get(j).latitude >= splitY)) {
-                                System.out.println("Transfer down to rightUpCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).longitude + " - " + temp_hashValue.locations[tempP].get(j).latitude);
-                                (this.rightUpCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
-                            }
-                            else if ((temp_hashValue.locations[tempP].get(j).longitude < splitX) && (temp_hashValue.locations[tempP].get(j).latitude < splitY)) {
-                                System.out.println("Transfer down to leftDownCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).longitude + " - " + temp_hashValue.locations[tempP].get(j).latitude);
-                                (this.leftDownCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
-                            }
-                            else if ((temp_hashValue.locations[tempP].get(j).longitude >= splitX) && (temp_hashValue.locations[tempP].get(j).latitude < splitY)) {
-                                System.out.println("Transfer down to rightDownCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).longitude + " - " + temp_hashValue.locations[tempP].get(j).latitude);
-                                (this.rightDownCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+
+                            if (polygon.type == 1) {
+                                if ((temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude < splitX) && (temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude >= splitY)) {
+                                    System.out.println("Transfer down to leftUpCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude + " - " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude);
+                                    (this.leftUpCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
+                                if ((temp_hashValue.locations[tempP].get(j).mbrPolygon.rightDown.longitude >= splitX) && (temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude >= splitY)) {
+                                    System.out.println("Transfer down to rightUpCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude + " - " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude);
+                                    (this.rightUpCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
+                                if ((temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude < splitX) && (temp_hashValue.locations[tempP].get(j).mbrPolygon.rightDown.latitude < splitY)) {
+                                    System.out.println("Transfer down to leftDownCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude + " - " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude);
+                                    (this.leftDownCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
+                                if ((temp_hashValue.locations[tempP].get(j).mbrPolygon.rightDown.longitude >= splitX) && (temp_hashValue.locations[tempP].get(j).mbrPolygon.rightDown.latitude < splitY)) {
+                                    System.out.println("Transfer down to rightDownCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude + " - " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude);
+                                    (this.rightDownCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
                             }
                             else {
-                                System.out.println("PROBLEM: (not fit to any new cell) with keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).longitude + " - " + temp_hashValue.locations[tempP].get(j).latitude);
+                                if ((temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude < splitX) && (temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude >= splitY)) {
+                                    System.out.println("Transfer down to leftUpCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude + " - " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude);
+                                    (this.leftUpCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
+                                else if ((temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude >= splitX) && (temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude >= splitY)) {
+                                    System.out.println("Transfer down to rightUpCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude + " - " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude);
+                                    (this.rightUpCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
+                                else if ((temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude < splitX) && (temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude < splitY)) {
+                                    System.out.println("Transfer down to leftDownCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude + " - " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude);
+                                    (this.leftDownCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
+                                else if ((temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude >= splitX) && (temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude < splitY)) {
+                                    System.out.println("Transfer down to rightDownCell the keyword : " + key + " --> " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.longitude + " - " + temp_hashValue.locations[tempP].get(j).mbrPolygon.leftUp.latitude);
+                                    (this.rightDownCell).addKeyword(key, temp_hashValue.locations[tempP].get(j), timestamp, tempP);
+                                }
+                                else {
+                                    System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
+                                }
                             }
                         }
                         temp_hashValue.locations[tempP].clear();
@@ -478,21 +499,19 @@ class myCell {
 
 
     private void updateTopKList(topKNode newNode) {
-        if (topKList.size() < k) {
+        boolean found = false ;
+        for (topKNode t : topKList) {
+            if ((t.keyword).equals(newNode.keyword)) {
+                t.trendValue = newNode.trendValue ;
+                found = true ;
+            }
+        }
+        if ( (topKList.size() < k) && (!found) ) {
             topKList.add(newNode) ;
         }
-        else {
-            boolean found = false ;
-            for (topKNode t : topKList) {
-                if ((t.keyword).equals(newNode.keyword)) {
-                    t.trendValue = newNode.trendValue ;
-                    found = true ;
-                }
-            }
-            if (!found) {
-                topKList.remove(topKList.size()-1) ;
-                topKList.add(newNode) ;
-            }
+        else if (!found) {
+            topKList.remove(topKList.size()-1) ;
+            topKList.add(newNode) ;
         }
         topKListSorting();
     }
@@ -515,6 +534,7 @@ class myCell {
 
     private void printCell() {
         System.out.println("@@> Print for level " + this.level);
+        System.out.println("MBR " + this.mbr.leftUp.longitude + " - " + this.mbr.rightDown.longitude + " - " + this.mbr.rightDown.latitude + " - " + this.mbr.leftUp.latitude);
         System.out.println("Total insertions = " + this.counterInsertion);
         System.out.println("curCapacity = " + this.curCapacity);
         for (int i = 0 ; i < this.countersSum.length ; i++) {
@@ -527,7 +547,8 @@ class myCell {
             for (int i = 0 ; i < temp.countersN.length ; i++) {
                 System.out.println("counter = " + temp.countersN[i]);
                 for (int j = 0 ; j < temp.locations[i].size() ; j++) {
-                    System.out.println(temp.locations[i].get(j).longitude + " - " + temp.locations[i].get(j).latitude);
+                    System.out.println(temp.locations[i].get(j).type + " - " + temp.locations[i].get(j).portion + " - " +
+                            temp.locations[i].get(j).mbrPolygon.leftUp.longitude + " - " + temp.locations[i].get(j).mbrPolygon.rightDown.longitude + " - " + temp.locations[i].get(j).mbrPolygon.rightDown.latitude  + " - " + temp.locations[i].get(j).mbrPolygon.leftUp.latitude);
                 }
             }
         }

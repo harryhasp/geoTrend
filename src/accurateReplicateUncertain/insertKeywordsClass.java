@@ -29,17 +29,19 @@ class insertKeywordsClass {
                 String type = lineList.get(1) ;
 
                 myPolygon newPolygon ;
+                String keyword ;
                 if (type.equals("point")) {
                     newPolygon = new myPolygon((new mbr(Double.parseDouble(lineList.get(2)), 0, 0, Double.parseDouble(lineList.get(3)))),0) ;
+                    keyword = (lineList.get(4)).substring(1) ;
                 }
                 else if (type.equals("polygon")) {
                     newPolygon = new myPolygon((new mbr(Double.parseDouble(lineList.get(2)), Double.parseDouble(lineList.get(4)), Double.parseDouble(lineList.get(3)), Double.parseDouble(lineList.get(5)))),1) ;
+                    keyword = (lineList.get(6)).substring(1) ;
                 }
                 else {
                     System.out.println("STRANGE TYPE");
                     continue;
                 }
-                String keyword = (lineList.get(4)).substring(1) ;
                 long timestamp = Long.parseLong(lineList.get(0)) ;
 
                 System.out.println(type + " - " + timestamp + " - " + keyword + " - " +
