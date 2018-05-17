@@ -1,4 +1,4 @@
-package accurateReplicate;
+package accurateReplicateUncertain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ class hashValue {
     //private int N ;
     double[] countersN ;
     double trend ;
-    List<myPoint>[] locations ;
+    List<myPolygon>[] locations ;
     // list of lists for locations. First list size of n (T/N)
 
     hashValue(int N) {

@@ -1,4 +1,4 @@
-package accurateReplicate;
+package accurateReplicateUncertain;
 
 import java.util.*;
 
@@ -44,7 +44,7 @@ class myCell {
     }
 
     // TO DO :
-    int addKeyword (String keyword, myPoint point, long timestamp, int p) {
+    int addKeyword (String keyword, myPolygon polygon, long timestamp, int p) {
 
         lazyExpiration(timestamp) ;
 
@@ -54,22 +54,62 @@ class myCell {
                 System.out.println("--> We have space for one more keyword");
                 this.curCapacity++ ;
                 this.counterInsertion++ ;
-                this.countersSum[p]++ ;
+
+                double toAdd ;
+                myPolygon toAddPolygon = new myPolygon(new mbr(0,0,0,0), 2) ;
+                if (polygon.type == 1) { // polygon
+                    toAddPolygon.type = 1 ;
+                    if (polygon.mbrPolygon.leftUp.longitude < mbr.leftUp.longitude) {
+                        toAddPolygon.mbrPolygon.leftUp.longitude = mbr.leftUp.longitude ;
+                    }
+                    else {
+                        toAddPolygon.mbrPolygon.leftUp.longitude = polygon.mbrPolygon.leftUp.longitude ;
+                    }
+                    if (polygon.mbrPolygon.rightDown.longitude < mbr.rightDown.longitude) {
+                        toAddPolygon.mbrPolygon.rightDown.longitude = polygon.mbrPolygon.rightDown.longitude ;
+                    }
+                    else {
+                        toAddPolygon.mbrPolygon.rightDown.longitude = mbr.rightDown.longitude ;
+                    }
+                    if (polygon.mbrPolygon.leftUp.latitude < mbr.leftUp.latitude) {
+                        toAddPolygon.mbrPolygon.leftUp.latitude = polygon.mbrPolygon.leftUp.latitude ;
+                    }
+                    else {
+                        toAddPolygon.mbrPolygon.leftUp.latitude = mbr.leftUp.latitude ;
+                    }
+                    if (polygon.mbrPolygon.rightDown.latitude < mbr.rightDown.latitude) {
+                        toAddPolygon.mbrPolygon.rightDown.latitude = mbr.rightDown.latitude ;
+                    }
+                    else {
+                        toAddPolygon.mbrPolygon.rightDown.latitude = polygon.mbrPolygon.rightDown.latitude ;
+                    }
+                    double prevAreaCovered = (polygon.mbrPolygon.leftUp.longitude - polygon.mbrPolygon.rightDown.longitude) * (polygon.mbrPolygon.rightDown.latitude - polygon.mbrPolygon.leftUp.latitude) ;
+                    double newAreaCovered = (toAddPolygon.mbrPolygon.leftUp.longitude - toAddPolygon.mbrPolygon.rightDown.longitude) * (toAddPolygon.mbrPolygon.rightDown.latitude - toAddPolygon.mbrPolygon.leftUp.latitude) ;
+                    toAdd = newAreaCovered / prevAreaCovered ;
+                    toAddPolygon.portion = toAdd ;
+                    System.out.println("toAdd = " + toAdd);
+                }
+                else { // point
+                    toAdd = 1 ;
+                    toAddPolygon = polygon ;
+                }
+
+                this.countersSum[p] = this.countersSum[p] + toAdd ; // to change
 
                 if (hashC.containsKey(keyword)) { // keyword already exists at this leaf
                     System.out.println("--> We have it already: " + keyword);
                     hashValue temp_hashValue = hashC.get(keyword);
-                    temp_hashValue.countersN[p]++;
-                    temp_hashValue.locations[p].add(point) ;
+                    temp_hashValue.countersN[p] = temp_hashValue.countersN[p] + toAdd ;
+                    temp_hashValue.locations[p].add(toAddPolygon) ;
                     temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                     hashC.put(keyword, temp_hashValue);
                 }
                 else { // new keyword
                     System.out.println("--> We add '" + keyword + "' to level " + this.level);
                     hashValue temp_hashValue = new hashValue(this.N);
-                    temp_hashValue.countersN[p] = 1 ;
-                    temp_hashValue.locations[p].add(point) ;
-                    //temp_hashValue.trend = (6*(N-1)) / (N*(N+1)*(2*N+1)) ;
+                    temp_hashValue.countersN[p] = toAdd ;
+                    temp_hashValue.locations[p].add(toAddPolygon) ;
+                    temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                     hashC.put(keyword, temp_hashValue);
                 }
             }
@@ -127,23 +167,63 @@ class myCell {
 
                 // increase variables for the new keyword which initially goes to the aggregate table
                 this.counterInsertion++ ;
-                this.countersSum[p]++ ;
 
-                // add new keyword to the aggregate table
-                if (hashC.containsKey(keyword)) { // existed keyword
+                double toAdd ;
+                myPolygon toAddPolygon = new myPolygon(new mbr(0,0,0,0), 2) ;
+                if (polygon.type == 1) { // polygon
+                    toAddPolygon.type = 1 ;
+                    if (polygon.mbrPolygon.leftUp.longitude < mbr.leftUp.longitude) {
+                        toAddPolygon.mbrPolygon.leftUp.longitude = mbr.leftUp.longitude ;
+                    }
+                    else {
+                        toAddPolygon.mbrPolygon.leftUp.longitude = polygon.mbrPolygon.leftUp.longitude ;
+                    }
+                    if (polygon.mbrPolygon.rightDown.longitude < mbr.rightDown.longitude) {
+                        toAddPolygon.mbrPolygon.rightDown.longitude = polygon.mbrPolygon.rightDown.longitude ;
+                    }
+                    else {
+                        toAddPolygon.mbrPolygon.rightDown.longitude = mbr.rightDown.longitude ;
+                    }
+                    if (polygon.mbrPolygon.leftUp.latitude < mbr.leftUp.latitude) {
+                        toAddPolygon.mbrPolygon.leftUp.latitude = polygon.mbrPolygon.leftUp.latitude ;
+                    }
+                    else {
+                        toAddPolygon.mbrPolygon.leftUp.latitude = mbr.leftUp.latitude ;
+                    }
+                    if (polygon.mbrPolygon.rightDown.latitude < mbr.rightDown.latitude) {
+                        toAddPolygon.mbrPolygon.rightDown.latitude = mbr.rightDown.latitude ;
+                    }
+                    else {
+                        toAddPolygon.mbrPolygon.rightDown.latitude = polygon.mbrPolygon.rightDown.latitude ;
+                    }
+                    double prevAreaCovered = (polygon.mbrPolygon.leftUp.longitude - polygon.mbrPolygon.rightDown.longitude) * (polygon.mbrPolygon.rightDown.latitude - polygon.mbrPolygon.leftUp.latitude) ;
+                    double newAreaCovered = (toAddPolygon.mbrPolygon.leftUp.longitude - toAddPolygon.mbrPolygon.rightDown.longitude) * (toAddPolygon.mbrPolygon.rightDown.latitude - toAddPolygon.mbrPolygon.leftUp.latitude) ;
+                    toAdd = newAreaCovered / prevAreaCovered ;
+                    toAddPolygon.portion = toAdd ;
+                    System.out.println("toAdd = " + toAdd);
+                }
+                else { // point
+                    toAdd = 1 ;
+                    toAddPolygon = polygon ;
+                }
+
+                this.countersSum[p] = this.countersSum[p] + toAdd ; // to change
+
+                // add keyword to the aggregate table
+                if (hashC.containsKey(keyword)) { // keyword already exists at this leaf
                     System.out.println("--> We have it already: " + keyword);
                     hashValue temp_hashValue = hashC.get(keyword);
-                    temp_hashValue.countersN[p]++;
-                    //temp_hashValue.locations[p].add(point) ;
+                    temp_hashValue.countersN[p] = temp_hashValue.countersN[p] + toAdd ;
+                    //temp_hashValue.locations[p].add(toAddPolygon) ;
                     temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                     hashC.put(keyword, temp_hashValue);
                 }
                 else { // new keyword
                     System.out.println("--> We add '" + keyword + "' to level " + this.level);
                     hashValue temp_hashValue = new hashValue(this.N);
-                    temp_hashValue.countersN[p] = 1 ;
-                    //temp_hashValue.locations[p].add(point) ;
-                    //temp_hashValue.trend = (6*(N-1)) / (N*(N+1)*(2*N+1)) ;
+                    temp_hashValue.countersN[p] = toAdd ;
+                    //temp_hashValue.locations[p].add(toAddPolygon) ;
+                    temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                     hashC.put(keyword, temp_hashValue);
                 }
 
@@ -152,24 +232,44 @@ class myCell {
                 //System.out.println(point.longitude + " - " + point.latitude);
 
                 // choose the correct child
-                if ((point.longitude < splitX) && (point.latitude >= splitY)) {
-                    System.out.println("--> cellCase = 0");
-                    (this.leftUpCell).addKeyword(keyword, point, timestamp, p);
-                }
-                else if ((point.longitude >= splitX) && (point.latitude >= splitY)) {
-                    System.out.println("--> cellCase = 1");
-                    (this.rightUpCell).addKeyword(keyword, point, timestamp, p);
-                }
-                else if ((point.longitude < splitX) && (point.latitude < splitY)) {
-                    System.out.println("--> cellCase = 2");
-                    (this.leftDownCell).addKeyword(keyword, point, timestamp, p);
-                }
-                else if ((point.longitude >= splitX) && (point.latitude < splitY)) {
-                    System.out.println("--> cellCase = 3");
-                    (this.rightDownCell).addKeyword(keyword, point, timestamp, p);
+                if (polygon.type == 1) {
+                    if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
+                        System.out.println("--> cellCase = 0");
+                        (this.leftUpCell).addKeyword(keyword, polygon, timestamp, p);
+                    }
+                    if ((polygon.mbrPolygon.rightDown.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
+                        System.out.println("--> cellCase = 1");
+                        (this.rightUpCell).addKeyword(keyword, polygon, timestamp, p);
+                    }
+                    if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.rightDown.latitude < splitY)) {
+                        System.out.println("--> cellCase = 2");
+                        (this.leftDownCell).addKeyword(keyword, polygon, timestamp, p);
+                    }
+                    if ((polygon.mbrPolygon.rightDown.longitude >= splitX) && (polygon.mbrPolygon.rightDown.latitude < splitY)) {
+                        System.out.println("--> cellCase = 3");
+                        (this.rightDownCell).addKeyword(keyword, polygon, timestamp, p);
+                    }
                 }
                 else {
-                    System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
+                    if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
+                        System.out.println("--> cellCase = 0");
+                        (this.leftUpCell).addKeyword(keyword, polygon, timestamp, p);
+                    }
+                    else if ((polygon.mbrPolygon.leftUp.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
+                        System.out.println("--> cellCase = 1");
+                        (this.rightUpCell).addKeyword(keyword, polygon, timestamp, p);
+                    }
+                    else if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude < splitY)) {
+                        System.out.println("--> cellCase = 2");
+                        (this.leftDownCell).addKeyword(keyword, polygon, timestamp, p);
+                    }
+                    else if ((polygon.mbrPolygon.leftUp.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude < splitY)) {
+                        System.out.println("--> cellCase = 3");
+                        (this.rightDownCell).addKeyword(keyword, polygon, timestamp, p);
+                    }
+                    else {
+                        System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
+                    }
                 }
             }
 
@@ -179,23 +279,63 @@ class myCell {
 
             // increase variables for the new keyword which initially goes to the aggregate table
             this.counterInsertion++ ;
-            this.countersSum[p]++ ;
+
+            double toAdd ;
+            myPolygon toAddPolygon = new myPolygon(new mbr(0,0,0,0), 2) ;
+            if (polygon.type == 1) { // polygon
+                toAddPolygon.type = 1 ;
+                if (polygon.mbrPolygon.leftUp.longitude < mbr.leftUp.longitude) {
+                    toAddPolygon.mbrPolygon.leftUp.longitude = mbr.leftUp.longitude ;
+                }
+                else {
+                    toAddPolygon.mbrPolygon.leftUp.longitude = polygon.mbrPolygon.leftUp.longitude ;
+                }
+                if (polygon.mbrPolygon.rightDown.longitude < mbr.rightDown.longitude) {
+                    toAddPolygon.mbrPolygon.rightDown.longitude = polygon.mbrPolygon.rightDown.longitude ;
+                }
+                else {
+                    toAddPolygon.mbrPolygon.rightDown.longitude = mbr.rightDown.longitude ;
+                }
+                if (polygon.mbrPolygon.leftUp.latitude < mbr.leftUp.latitude) {
+                    toAddPolygon.mbrPolygon.leftUp.latitude = polygon.mbrPolygon.leftUp.latitude ;
+                }
+                else {
+                    toAddPolygon.mbrPolygon.leftUp.latitude = mbr.leftUp.latitude ;
+                }
+                if (polygon.mbrPolygon.rightDown.latitude < mbr.rightDown.latitude) {
+                    toAddPolygon.mbrPolygon.rightDown.latitude = mbr.rightDown.latitude ;
+                }
+                else {
+                    toAddPolygon.mbrPolygon.rightDown.latitude = polygon.mbrPolygon.rightDown.latitude ;
+                }
+                double prevAreaCovered = (polygon.mbrPolygon.leftUp.longitude - polygon.mbrPolygon.rightDown.longitude) * (polygon.mbrPolygon.rightDown.latitude - polygon.mbrPolygon.leftUp.latitude) ;
+                double newAreaCovered = (toAddPolygon.mbrPolygon.leftUp.longitude - toAddPolygon.mbrPolygon.rightDown.longitude) * (toAddPolygon.mbrPolygon.rightDown.latitude - toAddPolygon.mbrPolygon.leftUp.latitude) ;
+                toAdd = newAreaCovered / prevAreaCovered ;
+                toAddPolygon.portion = toAdd ;
+                System.out.println("toAdd = " + toAdd);
+            }
+            else { // point
+                toAdd = 1 ;
+                toAddPolygon = polygon ;
+            }
+
+            this.countersSum[p] = this.countersSum[p] + toAdd ; // to change
 
             // add keyword to the aggregate table
-            if (hashC.containsKey(keyword)) { // existed keyword
+            if (hashC.containsKey(keyword)) { // keyword already exists at this leaf
                 System.out.println("--> We have it already: " + keyword);
                 hashValue temp_hashValue = hashC.get(keyword);
-                temp_hashValue.countersN[p]++;
-                //temp_hashValue.locations[p].add(point) ;
+                temp_hashValue.countersN[p] = temp_hashValue.countersN[p] + toAdd ;
+                //temp_hashValue.locations[p].add(toAddPolygon) ;
                 temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                 hashC.put(keyword, temp_hashValue);
             }
             else { // new keyword
                 System.out.println("--> We add '" + keyword + "' to level " + this.level);
                 hashValue temp_hashValue = new hashValue(this.N);
-                temp_hashValue.countersN[p] = 1 ;
-                //temp_hashValue.locations[p].add(point) ;
-                //temp_hashValue.trend = (6*(N-1)) / (N*(N+1)*(2*N+1)) ;
+                temp_hashValue.countersN[p] = toAdd ;
+                //temp_hashValue.locations[p].add(toAddPolygon) ;
+                temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                 hashC.put(keyword, temp_hashValue);
             }
 
@@ -203,27 +343,48 @@ class myCell {
             System.out.println("--> We need to go down to level = " + (this.level+1));
             double splitX = mbr.leftUp.longitude + ((mbr.rightDown.longitude - mbr.leftUp.longitude) / 2);
             double splitY = mbr.rightDown.latitude + ((mbr.leftUp.latitude - mbr.rightDown.latitude) / 2);
-            System.out.println(point.longitude + " - " + point.latitude);
+            System.out.println(polygon.mbrPolygon.leftUp.longitude + " - " + polygon.mbrPolygon.leftUp.latitude + " - " + polygon.mbrPolygon.rightDown.longitude + " - " + polygon.mbrPolygon.rightDown.latitude);
             System.out.println("splits to: " + splitX + " - " + splitY);
+
             // choose the correct child
-            if ((point.longitude < splitX) && (point.latitude >= splitY)) {
-                System.out.println("--> cellCase = 0");
-                (this.leftUpCell).addKeyword(keyword, point, timestamp, p);
-            }
-            else if ((point.longitude >= splitX) && (point.latitude >= splitY)) {
-                System.out.println("--> cellCase = 1");
-                (this.rightUpCell).addKeyword(keyword, point, timestamp, p);
-            }
-            else if ((point.longitude < splitX) && (point.latitude < splitY)) {
-                System.out.println("--> cellCase = 2");
-                (this.leftDownCell).addKeyword(keyword, point, timestamp, p);
-            }
-            else if ((point.longitude >= splitX) && (point.latitude < splitY)) {
-                System.out.println("--> cellCase = 3");
-                (this.rightDownCell).addKeyword(keyword, point, timestamp, p);
+            if (polygon.type == 1) {
+                if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
+                    System.out.println("--> cellCase = 0");
+                    (this.leftUpCell).addKeyword(keyword, polygon, timestamp, p);
+                }
+                if ((polygon.mbrPolygon.rightDown.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
+                    System.out.println("--> cellCase = 1");
+                    (this.rightUpCell).addKeyword(keyword, polygon, timestamp, p);
+                }
+                if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.rightDown.latitude < splitY)) {
+                    System.out.println("--> cellCase = 2");
+                    (this.leftDownCell).addKeyword(keyword, polygon, timestamp, p);
+                }
+                if ((polygon.mbrPolygon.rightDown.longitude >= splitX) && (polygon.mbrPolygon.rightDown.latitude < splitY)) {
+                    System.out.println("--> cellCase = 3");
+                    (this.rightDownCell).addKeyword(keyword, polygon, timestamp, p);
+                }
             }
             else {
-                System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
+                if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
+                    System.out.println("--> cellCase = 0");
+                    (this.leftUpCell).addKeyword(keyword, polygon, timestamp, p);
+                }
+                else if ((polygon.mbrPolygon.leftUp.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
+                    System.out.println("--> cellCase = 1");
+                    (this.rightUpCell).addKeyword(keyword, polygon, timestamp, p);
+                }
+                else if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude < splitY)) {
+                    System.out.println("--> cellCase = 2");
+                    (this.leftDownCell).addKeyword(keyword, polygon, timestamp, p);
+                }
+                else if ((polygon.mbrPolygon.leftUp.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude < splitY)) {
+                    System.out.println("--> cellCase = 3");
+                    (this.rightDownCell).addKeyword(keyword, polygon, timestamp, p);
+                }
+                else {
+                    System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
+                }
             }
         }
 
