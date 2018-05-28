@@ -1,6 +1,7 @@
 package approximateReplicate;
 
 import java.util.*;
+import java.util.stream.DoubleStream;
 
 class myCell {
 
@@ -321,9 +322,22 @@ class myCell {
             this.countersSum[newC] = 0 ;
             //this.pExp-- ;
         }
+
+        // remove entries that have all counters Zero
+        Set<String> keysOld = hashC.keySet() ;
+        Iterator<String> it = keysOld.iterator() ;
+        while (it.hasNext()) {
+            String key = it.next() ;
+            hashValue temp_hashValue = hashC.get(key) ;
+            if (DoubleStream.of(temp_hashValue.countersN).sum() == 0.0) {
+                System.out.println("-------------> All zero for " + key);
+                it.remove();
+            }
+        }
+
         topKList.clear();
-        Set<String> keys = hashC.keySet() ;
-        for (String key : keys) {
+        Set<String> keysNew = hashC.keySet() ;
+        for (String key : keysNew) {
             updateTopKList(new topKNode(key, hashC.get(key).trend));
         }
         System.out.println("eventually this.pExp = " + this.pExp);
