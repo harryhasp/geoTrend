@@ -7,16 +7,16 @@ public class myGeoTrend {
     //private int k ;
     private int N ; // N counters - T/N
     private int T ; // T time units - number of time units that we keep data
-    //private int timer ;
+    private double e ;
     private int p ; // pointer
 
-    myGeoTrend(int k, int N, int T) {
+    myGeoTrend(int k, int N, int T, double e) {
         //this.depth = 1 ;
-        this.firstCell = new myCell(-180.0, 180.0, -90.0, 90.0, 0, k, N, T) ;
+        this.firstCell = new myCell(-180.0, 180.0, -90.0, 90.0, 0, k, N, T, e) ;
         //this.k = k ;
         this.N = N ;
         this.T = T ;
-        //this.timer = 0 ;
+        this.e = e ;
         this.p = 0 ;
     }
 

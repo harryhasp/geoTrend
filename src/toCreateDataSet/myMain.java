@@ -1,7 +1,6 @@
-package createDataSet;
+package toCreateDataSet;
 
 import java.io.* ;
-import java.sql.Timestamp;
 import java.util.concurrent.ThreadLocalRandom ;
 
 public class myMain {

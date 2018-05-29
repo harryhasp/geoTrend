@@ -16,6 +16,7 @@ class myCell {
     private int k ;
     private int N ;
     private int T ; // T time units - number of time units that we keep data
+    private double e ;
     private long lastInsertTimestamp ;
     private double[] countersSum ;
     private int counterInsertion ;
@@ -23,7 +24,7 @@ class myCell {
     private long lastExpirationTimestamp ;
 
 
-    myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T) {
+    myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T, double e) {
         System.out.println("myCell init - level = " + level) ;
         this.maxCapacity = 4 ;
         this.curCapacity = 0 ;
@@ -34,6 +35,7 @@ class myCell {
         this.k = k ;
         this.N = N ;
         this.T = T ;
+        this.e = e ;
         this.p = N-1 ;
         this.pExp = N-1 ;
         this.lastInsertTimestamp = 0 ;
@@ -48,10 +50,6 @@ class myCell {
     int addKeyword (String keyword, myPoint point, long timestamp, int p, double aboveCounter) {
 
         //this.p = p ;
-
-//        if ( ((timestamp - this.lastTimestamp) % this.T) > 0 ) {
-//            System.out.println("-----------------> We need to delete") ;
-//        }
 
         lazyExpiration(timestamp) ;
 
@@ -103,13 +101,13 @@ class myCell {
 
                 // create the 4 new cells
                 System.out.println("--> We need to create leftUpCell");
-                this.leftUpCell = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
+                this.leftUpCell = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T, this.e);
                 System.out.println("--> We need to create rightUpCell");
-                this.rightUpCell = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
+                this.rightUpCell = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T, this.e);
                 System.out.println("--> We need to create leftDownCell");
-                this.leftDownCell = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
+                this.leftDownCell = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T, this.e);
                 System.out.println("--> We need to create rightDownCell");
-                this.rightDownCell = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
+                this.rightDownCell = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T, this.e);
 
                 // push old values to new cells
                 Set<String> keys = hashC.keySet();
@@ -143,30 +141,30 @@ class myCell {
                 if (hashC.containsKey(keyword)) { // existed keyword
                     System.out.println("--> We have it already: " + keyword);
                     hashValue temp_hashValue = hashC.get(keyword);
-                    if (aboveCounter == -1) { // keyword does NOT come from a split
-                        System.out.println("-----------------------------------> H E R E - 1");
-                        temp_hashValue.countersN[p]++;
-                    }
-                    else { // keyword comes from a split - probably never come here
-                        System.out.println("-----------------------------------> H E R E - 2");
-                        temp_hashValue.countersN[p] = aboveCounter ;
-                    }
-                    //temp_hashValue.countersN[p]++;
+//                    if (aboveCounter == -1) { // keyword does NOT come from a split
+//                        System.out.println("-----------------------------------> H E R E - 1");
+//                        temp_hashValue.countersN[p]++;
+//                    }
+//                    else { // keyword comes from a split - probably never come here
+//                        System.out.println("-----------------------------------> H E R E - 2");
+//                        temp_hashValue.countersN[p] = aboveCounter ;
+//                    }
+                    temp_hashValue.countersN[p]++;
                     temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                     hashC.put(keyword, temp_hashValue);
                 }
                 else { // new keyword
                     System.out.println("--> We add '" + keyword + "' to level " + this.level);
                     hashValue temp_hashValue = new hashValue(this.N);
-                    if (aboveCounter == -1) { // new keyword does NOT come from a split
-                        System.out.println("-----------------------------------> H E R E - 3");
-                        temp_hashValue.countersN[p] = 1 ;
-                    }
-                    else { // new keyword comes from a split - probably never come here
-                        System.out.println("-----------------------------------> H E R E - 4");
-                        temp_hashValue.countersN[p] = aboveCounter ;
-                    }
-                    //temp_hashValue.countersN[p] = 1 ;
+//                    if (aboveCounter == -1) { // new keyword does NOT come from a split
+//                        System.out.println("-----------------------------------> H E R E - 3");
+//                        temp_hashValue.countersN[p] = 1 ;
+//                    }
+//                    else { // new keyword comes from a split - probably never come here
+//                        System.out.println("-----------------------------------> H E R E - 4");
+//                        temp_hashValue.countersN[p] = aboveCounter ;
+//                    }
+                    temp_hashValue.countersN[p] = 1 ;
                     temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                     hashC.put(keyword, temp_hashValue);
                 }
@@ -209,14 +207,14 @@ class myCell {
             if (hashC.containsKey(keyword)) { // existed keyword
                 System.out.println("--> We have it already: " + keyword);
                 hashValue temp_hashValue = hashC.get(keyword);
-                if (aboveCounter == -1) { // keyword does NOT come from a split
-                    System.out.println("-----------------------------------> H E R E - 1.1");
-                    temp_hashValue.countersN[p]++;
-                }
-                else { // keyword comes from a split - probably never come here
-                    System.out.println("-----------------------------------> H E R E - 2.1");
-                    temp_hashValue.countersN[p] = aboveCounter ;
-                }
+//                if (aboveCounter == -1) { // keyword does NOT come from a split
+//                    System.out.println("-----------------------------------> H E R E - 1.1");
+//                    temp_hashValue.countersN[p]++;
+//                }
+//                else { // keyword comes from a split - probably never come here
+//                    System.out.println("-----------------------------------> H E R E - 2.1");
+//                    temp_hashValue.countersN[p] = aboveCounter ;
+//                }
                 //temp_hashValue.countersN[p]++;
                 temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                 hashC.put(keyword, temp_hashValue);
@@ -224,15 +222,15 @@ class myCell {
             else { // new keyword
                 System.out.println("--> We add '" + keyword + "' to level " + this.level);
                 hashValue temp_hashValue = new hashValue(this.N);
-                if (aboveCounter == -1) { // new keyword does NOT come from a split
-                    System.out.println("-----------------------------------> H E R E - 3.1");
-                    temp_hashValue.countersN[p] = 1 ;
-                }
-                else { // new keyword comes from a split - probably never come here
-                    System.out.println("-----------------------------------> H E R E - 4.1");
-                    temp_hashValue.countersN[p] = aboveCounter ;
-                }
-                //temp_hashValue.countersN[p] = 1 ;
+//                if (aboveCounter == -1) { // new keyword does NOT come from a split
+//                    System.out.println("-----------------------------------> H E R E - 3.1");
+//                    temp_hashValue.countersN[p] = 1 ;
+//                }
+//                else { // new keyword comes from a split - probably never come here
+//                    System.out.println("-----------------------------------> H E R E - 4.1");
+//                    temp_hashValue.countersN[p] = aboveCounter ;
+//                }
+                temp_hashValue.countersN[p] = 1 ;
                 temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
                 hashC.put(keyword, temp_hashValue);
             }
@@ -286,6 +284,12 @@ class myCell {
         //this.pExp = p ;
         this.lastInsertTimestamp = timestamp ;
 
+//        double sumOfCountersSum = DoubleStream.of(this.countersSum).sum() ;
+//        if ((sumOfCountersSum % (1/this.e)) == 0) {
+//            System.out.println("-||-> Going to trendMem for level " + this.level + " - " + sumOfCountersSum + " - " + (1/this.e));
+//            trendMem(sumOfCountersSum);
+//        }
+
         printCell();
 
         return 0;
@@ -316,7 +320,7 @@ class myCell {
             Set<String> keys = hashC.keySet() ;
             for (String key : keys) {
                 hashValue temp_hashValue = hashC.get(key) ;
-                temp_hashValue.countersN[newC] = 0 ;
+                temp_hashValue.countersN[newC] = 0.0 ;
                 hashC.put(key, temp_hashValue) ;
             }
             this.countersSum[newC] = 0 ;
@@ -347,6 +351,28 @@ class myCell {
         System.out.println("Print for LAZY");
         printCell();
         System.out.println("- - -");
+    }
+
+
+    private void trendMem(double sumOfCountersSum) {
+        int counter ;
+        Set<String> keys = hashC.keySet() ;
+        Iterator<String> it = keys.iterator() ;
+        while (it.hasNext()) {
+            String key = it.next() ;
+            hashValue temp_hashValue = hashC.get(key) ;
+            counter = 0 ;
+            for (int i = 0 ; i < N ; i++) {
+                if (temp_hashValue.countersN[i] < e*sumOfCountersSum) {
+                    counter++ ;
+                }
+            }
+            if (counter == N) {
+                System.out.println("-------------> Because of trendMem remove " + key);
+                it.remove();
+            }
+        }
+
     }
 
 
@@ -402,6 +428,7 @@ class myCell {
     private void printCell() {
         System.out.println("@@> Print for level " + this.level);
         System.out.println("Total insertions = " + this.counterInsertion);
+        System.out.println("Current capacity = " + this.curCapacity);
         for (int i = 0 ; i < this.countersSum.length ; i++) {
             System.out.println("countersSum at " + i + " = " + this.countersSum[i]);
         }
