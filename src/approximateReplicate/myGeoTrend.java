@@ -1,5 +1,7 @@
 package approximateReplicate;
 
+import java.util.Set;
+
 public class myGeoTrend {
 
     //private int depth ;
@@ -27,15 +29,21 @@ public class myGeoTrend {
         p = N - 1 - p ;
         System.out.println("-------------> p = " + p);
 
-        ret = firstCell.addKeyword(keyword, point, timestamp, p, -1) ;
+        firstCell.addKeyword(keyword, point, timestamp, p, -1) ;
+        //ret = firstCell.addKeyword(keyword, point, timestamp, p, -1) ;
 
-        System.out.println("ret = " + ret) ;
+        //System.out.println("ret = " + ret) ;
 
         System.out.println("-----------------------------------------------------------");
 
 //        System.out.println("----------------------------------------- printCell - start");
 //        firstCell.printCell() ;
 //        System.out.println("----------------------------------------- printCell - end");
+    }
+
+    int statistics(Set<Integer> levels) {
+        int ret = this.firstCell.statistics(levels) ;
+        return ret ;
     }
 
 }

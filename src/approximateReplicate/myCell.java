@@ -47,7 +47,7 @@ class myCell {
     }
 
     // TO DO : store timestamp, now zero everywhere
-    int addKeyword (String keyword, myPoint point, long timestamp, int p, double aboveCounter) {
+    void addKeyword (String keyword, myPoint point, long timestamp, int p, double aboveCounter) {
 
         //this.p = p ;
 
@@ -263,6 +263,18 @@ class myCell {
             }
         }
 
+        boolean toTrendMem = false ;
+        double sumOfCountersSum = DoubleStream.of(this.countersSum).sum() ;
+//        double sumOfCountersSum = 0.0 ;
+//        for (double s : this.countersSum) {
+//            sumOfCountersSum = sumOfCountersSum + s ;
+//        }
+        if ((counterInsertion % (1/this.e)) == 0) {
+            System.out.println("-||-> Going to trendMem for level " + this.level + " - " + counterInsertion + " - " + (1/this.e));
+            trendMem(sumOfCountersSum);
+            toTrendMem = true ;
+        }
+
         // update Trend values if we are in a new p (not as value)
         if ( (this.p != p) || (timestamp - this.lastInsertTimestamp > this.T/this.N) ) {
             System.out.println("--> We update the Trend values");
@@ -278,21 +290,24 @@ class myCell {
             }
         }
         else {
-            updateTopKList(new topKNode(keyword, hashC.get(keyword).trend));
+            if (toTrendMem) {
+                topKList.clear();
+                Set<String> keys = hashC.keySet() ;
+                for (String key : keys) {
+                    updateTopKList(new topKNode(key, hashC.get(key).trend));
+                }
+            }
+            else if (hashC.containsKey(keyword)) {
+                updateTopKList(new topKNode(keyword, hashC.get(keyword).trend));
+            }
         }
         this.p = p ;
         //this.pExp = p ;
         this.lastInsertTimestamp = timestamp ;
 
-//        double sumOfCountersSum = DoubleStream.of(this.countersSum).sum() ;
-//        if ((sumOfCountersSum % (1/this.e)) == 0) {
-//            System.out.println("-||-> Going to trendMem for level " + this.level + " - " + sumOfCountersSum + " - " + (1/this.e));
-//            trendMem(sumOfCountersSum);
-//        }
-
         printCell();
 
-        return 0;
+        //return 0;
     }
 
 
@@ -300,6 +315,11 @@ class myCell {
         System.out.println("&&> We are at lazyExpiration for level " + this.level + " with this.pExp " + this.pExp);
         int nc = (int) Math.floor((timestamp - this.lastExpirationTimestamp)/(T/N)) ;
         System.out.println("nc = " + nc);
+
+        if (nc < 1) {
+            System.out.println("No need to continue the lazyExpiration");
+            return;
+        }
 
         if (nc > N) {
             nc = N ;
@@ -393,20 +413,23 @@ class myCell {
 
     private void updateTopKList(topKNode newNode) {
         boolean found = false ;
+
+        // we check if we have at the topKList the keyword
         for (topKNode t : topKList) {
             if ((t.keyword).equals(newNode.keyword)) {
                 t.trendValue = newNode.trendValue ;
                 found = true ;
             }
         }
-        if ( (topKList.size() < k) && (!found) ) {
+
+        if ( (topKList.size() < k) && (!found) ) { // if do not have it and we have space for one more
             topKList.add(newNode) ;
         }
-        else if (!found) {
-            topKList.remove(topKList.size()-1) ;
+        else if (!found) { // if do not have it and no empty space
+            topKList.remove(topKList.size()-1) ; // remove smaller
             topKList.add(newNode) ;
         }
-        topKListSorting();
+        topKListSorting(); // sort topKList
     }
 
     private void topKListSorting () {
@@ -450,4 +473,19 @@ class myCell {
         System.out.println("this.pExp = " + this.pExp);
     }
 
+    int statistics(Set<Integer> levels) {
+        System.out.println("For statistics at level " + this.level);
+        levels.add(this.level) ;
+
+        Set<String> x = this.hashC.keySet() ;
+        for (String s : x) {
+            System.out.println(s);
+        }
+
+        if (this.leftUpCell != null) {
+            return this.leftUpCell.statistics(levels) + this.leftDownCell.statistics(levels) +
+                    this.rightDownCell.statistics(levels) + this.rightUpCell.statistics(levels) + this.hashC.size() ;
+        }
+        return this.hashC.size() ;
+    }
 }

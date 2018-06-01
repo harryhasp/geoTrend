@@ -4,8 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 class insertKeywordsClass {
 
@@ -14,11 +13,17 @@ class insertKeywordsClass {
         //int timer = 0 ;
 
         try {
+//            Runtime rt = Runtime.getRuntime();
+//            long prevFree = rt.freeMemory();
+//            List<Long> mytest = new LinkedList<>();
+
             File file = new File(sampleDataFile) ;
             FileReader fileReader = new FileReader(file) ;
             BufferedReader bufferedReader = new BufferedReader(fileReader) ;
 
             String line ;
+            long i = 0 ;
+            long myTimestamp = 0 ;
             while ((line = bufferedReader.readLine()) != null) {
                 List<String> lineList = Arrays.asList(line.split(",")) ;
                 for (String s : lineList) {
@@ -30,8 +35,13 @@ class insertKeywordsClass {
                 //double longitude = Double.parseDouble(lineList.get(1)) ;
                 //double latitude = Double.parseDouble(lineList.get(2)) ;
                 myPoint newPoint = new myPoint(Double.parseDouble(lineList.get(1)), Double.parseDouble(lineList.get(2))) ;
+
+//                i++ ;
+//                myTimestamp = i / 10 ;
+//                System.out.println("myTimestamp = " + myTimestamp) ;
                 long timestamp = Long.parseLong(lineList.get(0)) ;
 
+                //geoTrend.newKeyword(keyword, newPoint, myTimestamp) ;
                 geoTrend.newKeyword(keyword, newPoint, timestamp) ;
             }
             fileReader.close();
@@ -39,6 +49,10 @@ class insertKeywordsClass {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Set<Integer> levels = new HashSet<>() ;
+        int insertions = geoTrend.statistics(levels);
+        System.out.println("My statistics: Levels = " + levels.size() + " , Insertions = " + insertions);
     }
 
 }
