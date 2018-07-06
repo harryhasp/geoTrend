@@ -12,9 +12,10 @@ public class projectMain {
         double e = 0.25 ;
 
         myGeoTrend geoTrend = new myGeoTrend(k, N, T, e) ;
+        geoTrend.insertKeywords(sampleDataFile);
 
-        insertKeywordsClass indexShape = new insertKeywordsClass() ;
-        indexShape.insertKeywords(geoTrend, sampleDataFile) ;
+//        insertKeywordsClass indexShape = new insertKeywordsClass() ;
+//        indexShape.insertKeywords(geoTrend, sampleDataFile) ;
     }
 
 }

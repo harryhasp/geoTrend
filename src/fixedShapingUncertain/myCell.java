@@ -10,13 +10,13 @@ class myCell {
     private int p ;
     private int pExp ;
     private mbr mbr ;
-    private Hashtable<String, hashValue> hashC ;
+    private HashMap<String, hashValue> hashC ;
     private int level ;
     private myCell leftUpCell, leftDownCell, rightUpCell, rightDownCell;
     private int k ;
     private int N ;
     private int T ; // T time units - number of time units that we keep data
-    //private double e ;
+    private double e ;
     private long lastInsertTimestamp ;
     private double[] countersSum ;
     private int counterInsertion ;
@@ -24,30 +24,42 @@ class myCell {
     private long lastExpirationTimestamp ;
 
 
-    myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T) {
+    myCell(double minX, double maxX, double minY, double maxY, int level, int k, int N, int T, double e) {
         System.out.println("myCell init - level = " + level) ;
         this.maxCapacity = 4 ;
         this.curCapacity = 0 ;
         this.mbr = new mbr(minX, maxX, minY, maxY) ;
-        this.hashC = new Hashtable<>() ;
+        this.hashC = new HashMap<>() ;
         this.level = level ;
         this.leftUpCell = this.leftDownCell = this.rightUpCell = this.rightDownCell = null ;
         this.k = k ;
         this.N = N ;
         this.T = T ;
-        //this.e = e ;
+        this.e = e ;
+//        if (level == 0) {
+//            this.e = 0.01 ;
+//        }
+//        else if (level == 1) {
+//            this.e = 0.001 ;
+//        }
+//        else if (level == 2) {
+//            this.e = 0.0001 ;
+//        }
+//        else {
+//            this.e = 0.00001 ;
+//        }
         this.p = N-1 ;
         this.pExp = N-1 ;
         this.lastInsertTimestamp = 0 ;
         this.countersSum = new double[N] ;
-        Arrays.fill(countersSum, 0);
+        Arrays.fill(countersSum, 0.0);
         this.counterInsertion = 0 ;
         this.topKList = new LinkedList<>() ;
         this.lastExpirationTimestamp = 0 ;
     }
 
     // TO DO :
-    int addIndexingKeyword (String keyword, myPoint point) {
+    void addIndexingKeyword (String keyword, myPolygon polygon) {
 
         if ( (this.leftUpCell == null) && (this.rightUpCell == null) && (this.leftDownCell == null) && (this.rightDownCell == null) ) { // we are at a leaf - no children exist
             System.out.println("--> We are at a leaf - level = " + this.level);
@@ -81,29 +93,29 @@ class myCell {
                 //System.out.println(point.longitude + " - " + point.latitude);
 
                 // choose and create the correct child
-                if ((point.longitude < splitX) && (point.latitude >= splitY)) {
+                if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
                     System.out.println("--> cellCase = 0");
                     System.out.println("--> We need to create leftUpCell");
-                    this.leftUpCell = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
-                    (this.leftUpCell).addIndexingKeyword(keyword, point);
+                    this.leftUpCell = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T, this.e);
+                    (this.leftUpCell).addIndexingKeyword(keyword, polygon);
                 }
-                else if ((point.longitude >= splitX) && (point.latitude >= splitY)) {
+                else if ((polygon.mbrPolygon.leftUp.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
                     System.out.println("--> cellCase = 1");
                     System.out.println("--> We need to create rightUpCell");
-                    this.rightUpCell = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
-                    (this.rightUpCell).addIndexingKeyword(keyword, point);
+                    this.rightUpCell = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T, this.e);
+                    (this.rightUpCell).addIndexingKeyword(keyword, polygon);
                 }
-                else if ((point.longitude < splitX) && (point.latitude < splitY)) {
+                else if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude < splitY)) {
                     System.out.println("--> cellCase = 2");
                     System.out.println("--> We need to create leftDownCell");
-                    this.leftDownCell = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
-                    (this.leftDownCell).addIndexingKeyword(keyword, point);
+                    this.leftDownCell = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T, this.e);
+                    (this.leftDownCell).addIndexingKeyword(keyword, polygon);
                 }
-                else if ((point.longitude >= splitX) && (point.latitude < splitY)) {
+                else if ((polygon.mbrPolygon.leftUp.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude < splitY)) {
                     System.out.println("--> cellCase = 3");
                     System.out.println("--> We need to create rightDownCell");
-                    this.rightDownCell = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
-                    (this.rightDownCell).addIndexingKeyword(keyword, point);
+                    this.rightDownCell = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T, this.e);
+                    (this.rightDownCell).addIndexingKeyword(keyword, polygon);
                 }
                 else {
                     System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
@@ -118,53 +130,53 @@ class myCell {
             System.out.println("--> We need to go down to level = " + (this.level+1));
             double splitX = mbr.leftUp.longitude + ((mbr.rightDown.longitude - mbr.leftUp.longitude) / 2);
             double splitY = mbr.rightDown.latitude + ((mbr.leftUp.latitude - mbr.rightDown.latitude) / 2);
-            System.out.println(point.longitude + " - " + point.latitude);
+            System.out.println(polygon.mbrPolygon.leftUp.longitude + " - " + polygon.mbrPolygon.leftUp.latitude);
             System.out.println("splits to: " + splitX + " - " + splitY);
 
             // choose and create the correct child
-            if ((point.longitude < splitX) && (point.latitude >= splitY)) {
+            if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
                 System.out.println("--> cellCase = 0");
                 if (this.leftUpCell == null) {
                     System.out.println("--> We need to create leftUpCell");
-                    this.leftUpCell = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
+                    this.leftUpCell = new myCell(mbr.leftUp.longitude, splitX, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T, this.e);
                 }
                 else { // to del
                     System.out.println("--> We have leftUpCell");
                 }
-                (this.leftUpCell).addIndexingKeyword(keyword, point);
+                (this.leftUpCell).addIndexingKeyword(keyword, polygon);
             }
-            else if ((point.longitude >= splitX) && (point.latitude >= splitY)) {
+            else if ((polygon.mbrPolygon.leftUp.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY)) {
                 System.out.println("--> cellCase = 1");
                 if (this.rightUpCell == null) {
                     System.out.println("--> We need to create rightUpCell");
-                    this.rightUpCell = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T);
+                    this.rightUpCell = new myCell(splitX, mbr.rightDown.longitude, splitY, mbr.leftUp.latitude, this.level + 1, this.k, this.N, this.T, this.e);
                 }
                 else { // to del
                     System.out.println("--> We have rightUpCell");
                 }
-                (this.rightUpCell).addIndexingKeyword(keyword, point);
+                (this.rightUpCell).addIndexingKeyword(keyword, polygon);
             }
-            else if ((point.longitude < splitX) && (point.latitude < splitY)) {
+            else if ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude < splitY)) {
                 System.out.println("--> cellCase = 2");
                 if (this.leftDownCell == null) {
                     System.out.println("--> We need to create leftDownCell");
-                    this.leftDownCell = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
+                    this.leftDownCell = new myCell(mbr.leftUp.longitude, splitX, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T, this.e);
                 }
                 else { // to del
                     System.out.println("--> We have leftDownCell");
                 }
-                (this.leftDownCell).addIndexingKeyword(keyword, point);
+                (this.leftDownCell).addIndexingKeyword(keyword, polygon);
             }
-            else if ((point.longitude >= splitX) && (point.latitude < splitY)) {
+            else if ((polygon.mbrPolygon.leftUp.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude < splitY)) {
                 System.out.println("--> cellCase = 3");
                 if (this.rightDownCell == null) {
                     System.out.println("--> We need to create rightDownCell");
-                    this.rightDownCell = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T);
+                    this.rightDownCell = new myCell(splitX, mbr.rightDown.longitude, mbr.rightDown.latitude, splitY, this.level + 1, this.k, this.N, this.T, this.e);
                 }
                 else { // to del
                     System.out.println("--> We have rightDownCell");
                 }
-                (this.rightDownCell).addIndexingKeyword(keyword, point);
+                (this.rightDownCell).addIndexingKeyword(keyword, polygon);
             }
             else {
                 System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
@@ -173,7 +185,7 @@ class myCell {
 
         printCellIndexing();
 
-        return 0;
+        //return 0;
     }
 
 
@@ -202,14 +214,13 @@ class myCell {
     }
 
 
-    int addKeyword (String keyword, myPolygon polygon, long timestamp, int p) {
-/*
+    void addKeyword (String keyword, myPolygon polygon, long timestamp, int p) {
+
         //this.p = p ;
 
         lazyExpiration(timestamp) ;
 
         this.counterInsertion++ ;
-        //this.countersSum[p]++ ;
 
         double toAdd ;
         myPolygon toAddPolygon = new myPolygon(new mbr(0,0,0,0), 2) ;
@@ -250,34 +261,107 @@ class myCell {
             toAddPolygon = polygon ;
         }
 
-        // one of these 2
-        this.countersSum[p]++ ;
         this.countersSum[p] = this.countersSum[p] + toAdd ; // to change
 
-        if (hashC.containsKey(keyword)) { // existed keyword
+        if (hashC.containsKey(keyword)) { // keyword already exists at this leaf
             System.out.println("--> We have it already: " + keyword);
             hashValue temp_hashValue = hashC.get(keyword);
-
-            // one of these 2
             temp_hashValue.countersN[p] = temp_hashValue.countersN[p] + toAdd ;
-            temp_hashValue.countersN[p]++;
-
             temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
             hashC.put(keyword, temp_hashValue);
         }
         else { // new keyword
             System.out.println("--> We add '" + keyword + "' to level " + this.level);
             hashValue temp_hashValue = new hashValue(this.N);
-
-            // one of these 2
             temp_hashValue.countersN[p] = toAdd ;
-            temp_hashValue.countersN[p] = 1 ;
-
-            //temp_hashValue.trend = (6*(N-1)) / (N*(N+1)*(2*N+1)) ;
+            temp_hashValue.trend = trendCalculation(p, temp_hashValue.countersN) ;
             hashC.put(keyword, temp_hashValue);
         }
 
-        // update Trend values if we are in a new p (not as value)
+        // push keyword to the appropriate child if it exists
+        System.out.println("--> We need to go down to level = " + (this.level+1));
+        double splitX = mbr.leftUp.longitude + ((mbr.rightDown.longitude - mbr.leftUp.longitude) / 2);
+        double splitY = mbr.rightDown.latitude + ((mbr.leftUp.latitude - mbr.rightDown.latitude) / 2);
+        System.out.println(polygon.mbrPolygon.leftUp.longitude + " - " + polygon.mbrPolygon.leftUp.latitude + " - " + polygon.mbrPolygon.rightDown.longitude + " - " + polygon.mbrPolygon.rightDown.latitude);
+        System.out.println("splits to: " + splitX + " - " + splitY);
+
+        // choose the correct child
+        if (polygon.type == 1) {
+            if ((this.leftUpCell != null) &&
+                    ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY))) {
+                System.out.println("--> cellCase = 0");
+                (this.leftUpCell).addKeyword(keyword, polygon, timestamp, p);
+            }
+            if ((this.rightUpCell != null) &&
+                    ((polygon.mbrPolygon.rightDown.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY))) {
+                System.out.println("--> cellCase = 1");
+                (this.rightUpCell).addKeyword(keyword, polygon, timestamp, p);
+            }
+            if ((this.leftDownCell != null) &&
+                    ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.rightDown.latitude < splitY))) {
+                System.out.println("--> cellCase = 2");
+                (this.leftDownCell).addKeyword(keyword, polygon, timestamp, p);
+            }
+            if ((this.rightDownCell != null) &&
+                    ((polygon.mbrPolygon.rightDown.longitude >= splitX) && (polygon.mbrPolygon.rightDown.latitude < splitY))) {
+                System.out.println("--> cellCase = 3");
+                (this.rightDownCell).addKeyword(keyword, polygon, timestamp, p);
+            }
+        }
+        else {
+            if ((this.leftUpCell != null) &&
+                    ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY))) {
+                System.out.println("--> cellCase = 0");
+                (this.leftUpCell).addKeyword(keyword, polygon, timestamp, p);
+            }
+            else if ((this.rightUpCell != null) &&
+                    ((polygon.mbrPolygon.leftUp.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude >= splitY))) {
+                System.out.println("--> cellCase = 1");
+                (this.rightUpCell).addKeyword(keyword, polygon, timestamp, p);
+            }
+            else if ((this.leftDownCell != null) &&
+                    ((polygon.mbrPolygon.leftUp.longitude < splitX) && (polygon.mbrPolygon.leftUp.latitude < splitY))) {
+                System.out.println("--> cellCase = 2");
+                (this.leftDownCell).addKeyword(keyword, polygon, timestamp, p);
+            }
+            else if ((this.rightDownCell != null) &&
+                    ((polygon.mbrPolygon.leftUp.longitude >= splitX) && (polygon.mbrPolygon.leftUp.latitude < splitY))) {
+                System.out.println("--> cellCase = 3");
+                (this.rightDownCell).addKeyword(keyword, polygon, timestamp, p);
+            }
+            else {
+                System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
+            }
+        }
+
+//        if ((this.leftUpCell != null) && ((point.longitude < splitX) && (point.latitude >= splitY)) ) {
+//            System.out.println("--> cellCase = 0");
+//            (this.leftUpCell).addKeyword(keyword, point, timestamp, p);
+//        }
+//        else if ( (this.rightUpCell != null) && (point.longitude >= splitX) && (point.latitude >= splitY) ) {
+//            System.out.println("--> cellCase = 1");
+//            (this.rightUpCell).addKeyword(keyword, point, timestamp, p);
+//        }
+//        else if ( (this.leftDownCell != null) && (point.longitude < splitX) && (point.latitude < splitY) ) {
+//            System.out.println("--> cellCase = 2");
+//            (this.leftDownCell).addKeyword(keyword, point, timestamp, p);
+//        }
+//        else if ( (this.rightDownCell != null) && (point.longitude >= splitX) && (point.latitude < splitY) ) {
+//            System.out.println("--> cellCase = 3");
+//            (this.rightDownCell).addKeyword(keyword, point, timestamp, p);
+//        }
+//        else {
+//            System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
+//        }
+
+        boolean toTrendMem = false ;
+        double sumOfCountersSum = DoubleStream.of(this.countersSum).sum() ;
+        if ((sumOfCountersSum % (1/this.e)) == 0) {
+            System.out.println("-||-> Going to trendMem for level " + this.level + " - " + sumOfCountersSum + " - " + (1/this.e));
+            toTrendMem = trendMem(sumOfCountersSum);
+        }
+
+
         if ( (this.p != p) || (timestamp - this.lastInsertTimestamp > this.T/this.N) ) {
             System.out.println("--> We update the Trend values");
             Set<String> keys = hashC.keySet() ;
@@ -292,46 +376,29 @@ class myCell {
             }
         }
         else {
-            updateTopKList(new topKNode(keyword, hashC.get(keyword).trend));
+            if (hashC.containsKey(keyword)) {
+                System.out.println("--> We update the Trend values 2");
+                updateTopKList(new topKNode(keyword, hashC.get(keyword).trend));
+            }
+//            if (toTrendMem) {
+//                System.out.println("--> We update the topKList because of trendMem");
+//                topKList.clear();
+//                Set<String> keys = hashC.keySet() ;
+//                for (String key : keys) {
+//                    updateTopKList(new topKNode(key, hashC.get(key).trend));
+//                }
+//            }
+//            else if (hashC.containsKey(keyword)) {
+//                updateTopKList(new topKNode(keyword, hashC.get(keyword).trend));
+//            }
         }
         this.p = p ;
         //this.pExp = p ;
         this.lastInsertTimestamp = timestamp ;
 
-        // push keyword to the appropriate child if it exists
-        double splitX = mbr.leftUp.longitude + ((mbr.rightDown.longitude - mbr.leftUp.longitude) / 2);
-        double splitY = mbr.rightDown.latitude + ((mbr.leftUp.latitude - mbr.rightDown.latitude) / 2);
-        System.out.println("splits to: " + splitX + " - " + splitY);
-
-        if ((this.leftUpCell != null) && ((point.longitude < splitX) && (point.latitude >= splitY)) ) {
-            System.out.println("--> cellCase = 0");
-            (this.leftUpCell).addKeyword(keyword, point, timestamp, p);
-        }
-        else if ( (this.rightUpCell != null) && (point.longitude >= splitX) && (point.latitude >= splitY) ) {
-            System.out.println("--> cellCase = 1");
-            (this.rightUpCell).addKeyword(keyword, point, timestamp, p);
-        }
-        else if ( (this.leftDownCell != null) && (point.longitude < splitX) && (point.latitude < splitY) ) {
-            System.out.println("--> cellCase = 2");
-            (this.leftDownCell).addKeyword(keyword, point, timestamp, p);
-        }
-        else if ( (this.rightDownCell != null) && (point.longitude >= splitX) && (point.latitude < splitY) ) {
-            System.out.println("--> cellCase = 3");
-            (this.rightDownCell).addKeyword(keyword, point, timestamp, p);
-        }
-        else {
-            System.out.println("----> PROBLEM: SOMETHING STRANGE IS GOING ON");
-        }
-
-//        double sumOfCountersSum = DoubleStream.of(this.countersSum).sum() ;
-//        if ((sumOfCountersSum % (1/this.e)) == 0) {
-//            System.out.println("-||-> Going to trendMem for level " + this.level + " - " + sumOfCountersSum + " - " + (1/this.e));
-//            trendMem(sumOfCountersSum);
-//        }
-
         printCell();
-*/
-        return 0;
+
+        //return 0;
     }
 
 
@@ -339,6 +406,11 @@ class myCell {
         System.out.println("&&> We are at lazyExpiration for level " + this.level + " with this.pExp " + this.pExp);
         int nc = (int) Math.floor((timestamp - this.lastExpirationTimestamp)/(T/N)) ;
         System.out.println("nc = " + nc);
+
+        if (nc < 1) {
+            System.out.println("No need to continue the lazyExpiration");
+            return;
+        }
 
         if (nc > N) {
             nc = N ;
@@ -393,26 +465,33 @@ class myCell {
     }
 
 
-//    private void trendMem(double sumOfCountersSum) {
-//        int counter ;
-//        Set<String> keys = hashC.keySet() ;
-//        Iterator<String> it = keys.iterator() ;
-//        while (it.hasNext()) {
-//            String key = it.next() ;
-//            hashValue temp_hashValue = hashC.get(key) ;
-//            counter = 0 ;
-//            for (int i = 0 ; i < N ; i++) {
-//                if (temp_hashValue.countersN[i] < e*sumOfCountersSum) {
-//                    counter++ ;
-//                }
-//            }
-//            if (counter == N) {
-//                System.out.println("-------------> Because of trendMem remove " + key);
-//                it.remove();
-//            }
-//        }
-//
-//    }
+    private boolean trendMem(double sumOfCountersSum) {
+        boolean ret = false ;
+        int counter ;
+        Set<String> keys = hashC.keySet() ;
+        Iterator<String> it = keys.iterator() ;
+        hashValue temp_hashValue ;
+        while (it.hasNext()) {
+            String key = it.next() ;
+            temp_hashValue = hashC.get(key) ;
+            counter = 0 ;
+            for (int i = 0 ; i < N ; i++) {
+                if (temp_hashValue.countersN[i] < e*sumOfCountersSum) {
+                    counter++ ;
+                }
+            }
+            if (counter == N) {
+                System.out.println("-------------> Because of trendMem remove " + key);
+                for (int i = 0 ; i < N ; i++) {
+                    this.countersSum[i] = this.countersSum[i] - temp_hashValue.countersN[i] ;
+                }
+                it.remove();
+                ret = true ;
+            }
+        }
+
+        return ret ;
+    }
 
 
     private double trendCalculation(int p, double[] countersN) {
@@ -432,26 +511,37 @@ class myCell {
 
     private void updateTopKList(topKNode newNode) {
         boolean found = false ;
+
+        // we check if we have at the topKList the keyword
         for (topKNode t : topKList) {
             if ((t.keyword).equals(newNode.keyword)) {
+                System.out.println("Found");
                 t.trendValue = newNode.trendValue ;
                 found = true ;
+                topKListSorting(); // sort topKList
+                break;
             }
         }
-        if ( (topKList.size() < k) && (!found) ) {
+
+        if ( (topKList.size() < k) && (!found) ) { // if do not have it and we have space for one more
+            System.out.println("not Found 1");
             topKList.add(newNode) ;
+            topKListSorting(); // sort topKList
         }
-        else if (!found) {
-            topKList.remove(topKList.size()-1) ;
+        else if ( (!found) && (newNode.trendValue > topKList.get(topKList.size()-1).trendValue) ) { // if do not have it and no empty space
+            System.out.println("not Found 2");
+            topKList.remove(topKList.size()-1) ; // remove smaller
             topKList.add(newNode) ;
+            topKListSorting(); // sort topKList
         }
-        topKListSorting();
+        //topKListSorting(); // sort topKList
     }
 
     private void topKListSorting () {
         topKList.sort(new Comparator<topKNode>() {
             @Override
             public int compare(topKNode o1, topKNode o2) {
+                System.out.println("------------------------> topKListSorting" + o1.trendValue + " - " + o2.trendValue);
                 if(o1.trendValue < o2.trendValue){
                     return 1;
                 } else if (o1.trendValue > o2.trendValue) {
@@ -500,6 +590,36 @@ class myCell {
         }
         System.out.println("this.p = " + this.p);
         System.out.println("this.pExp = " + this.pExp);
+    }
+
+
+    int statistics(Set<Integer> levels) {
+        System.out.println("For statistics at level " + this.level);
+        levels.add(this.level) ;
+
+        Set<String> x = this.hashC.keySet() ;
+        for (String s : x) {
+            System.out.println(s);
+        }
+
+        int ret = 0 ;
+        if (this.leftUpCell != null) {
+            ret = ret + this.leftUpCell.statistics(levels) ;
+        }
+        if (this.leftDownCell != null) {
+            ret = ret + this.leftDownCell.statistics(levels) ;
+        }
+        if (this.rightDownCell != null) {
+            ret = ret + this.rightDownCell.statistics(levels) ;
+        }
+        if (this.rightUpCell != null) {
+            ret = ret + this.rightUpCell.statistics(levels) ;
+        }
+//        if (this.leftUpCell != null) {
+//            return this.leftUpCell.statistics(levels) + this.leftDownCell.statistics(levels) +
+//                    this.rightDownCell.statistics(levels) + this.rightUpCell.statistics(levels) + this.hashC.size() ;
+//        }
+        return ret + this.hashC.size() ;
     }
 
 }

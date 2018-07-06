@@ -1,5 +1,12 @@
 package approximateReplicate;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class myGeoTrend {
@@ -22,24 +29,59 @@ public class myGeoTrend {
         this.p = 0 ;
     }
 
-    void newKeyword (String keyword, myPoint point, long timestamp) {
-        int ret ;
 
-        p = (int) ( (timestamp / (T/N)) % N) ;
-        p = N - 1 - p ;
-        System.out.println("-------------> p = " + p);
+    void insertKeywords(String sampleDataFile) {
 
-        firstCell.addKeyword(keyword, point, timestamp, p, -1) ;
-        //ret = firstCell.addKeyword(keyword, point, timestamp, p, -1) ;
+        //int timer = 0 ;
 
-        //System.out.println("ret = " + ret) ;
+        try {
+//            Runtime rt = Runtime.getRuntime();
+//            long prevFree = rt.freeMemory();
+//            List<Long> mytest = new LinkedList<>();
 
-        System.out.println("-----------------------------------------------------------");
+            File file = new File(sampleDataFile) ;
+            FileReader fileReader = new FileReader(file) ;
+            BufferedReader bufferedReader = new BufferedReader(fileReader) ;
 
-//        System.out.println("----------------------------------------- printCell - start");
-//        firstCell.printCell() ;
-//        System.out.println("----------------------------------------- printCell - end");
+            String line ;
+            long i = 0 ;
+            long myTimestamp = 0 ;
+            while ((line = bufferedReader.readLine()) != null) {
+                List<String> lineList = Arrays.asList(line.split(",")) ;
+                for (String s : lineList) {
+                    System.out.print(s + " <> ") ;
+                }
+                System.out.println() ;
+
+                String keyword = (lineList.get(3)).substring(1) ;
+                //double longitude = Double.parseDouble(lineList.get(1)) ;
+                //double latitude = Double.parseDouble(lineList.get(2)) ;
+                myPoint newPoint = new myPoint(Double.parseDouble(lineList.get(1)), Double.parseDouble(lineList.get(2))) ;
+
+//                i++ ;
+//                myTimestamp = i / 10 ;
+//                System.out.println("myTimestamp = " + myTimestamp) ;
+                long timestamp = Long.parseLong(lineList.get(0)) ;
+
+                p = (int) ( (timestamp / (T/N)) % N) ;
+                p = N - 1 - p ;
+                System.out.println("-------------> p = " + p);
+
+                //firstCell.addKeyword(keyword, newPoint, myTimestamp, p, -1) ;
+                firstCell.addKeyword(keyword, newPoint, timestamp, p, -1) ;
+
+            }
+            fileReader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Set<Integer> levels = new HashSet<>() ;
+        int insertions = statistics(levels);
+        System.out.println("My statistics: Levels = " + levels.size() + " , Insertions = " + insertions);
     }
+
 
     int statistics(Set<Integer> levels) {
         int ret = this.firstCell.statistics(levels) ;

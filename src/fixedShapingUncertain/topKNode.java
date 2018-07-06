@@ -1,6 +1,6 @@
 package fixedShapingUncertain;
 
-class topKNode {
+public class topKNode {
     String keyword ;
     double trendValue ;
 

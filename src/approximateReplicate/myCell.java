@@ -10,7 +10,7 @@ class myCell {
     private int p ;
     private int pExp ;
     private mbr mbr ;
-    private Hashtable<String, hashValue> hashC ;
+    private HashMap<String, hashValue> hashC ;
     private int level ;
     private myCell leftUpCell, leftDownCell, rightUpCell, rightDownCell;
     private int k ;
@@ -29,18 +29,30 @@ class myCell {
         this.maxCapacity = 4 ;
         this.curCapacity = 0 ;
         this.mbr = new mbr(minX, maxX, minY, maxY) ;
-        this.hashC = new Hashtable<>() ;
+        this.hashC = new HashMap<>() ;
         this.level = level ;
         this.leftUpCell = this.leftDownCell = this.rightUpCell = this.rightDownCell = null ;
         this.k = k ;
         this.N = N ;
         this.T = T ;
         this.e = e ;
+//        if (level == 0) {
+//            this.e = 0.01 ;
+//        }
+//        else if (level == 1) {
+//            this.e = 0.001 ;
+//        }
+//        else if (level == 2) {
+//            this.e = 0.0001 ;
+//        }
+//        else {
+//            this.e = 0.00001 ;
+//        }
         this.p = N-1 ;
         this.pExp = N-1 ;
         this.lastInsertTimestamp = 0 ;
         this.countersSum = new double[N] ;
-        Arrays.fill(countersSum, 0);
+        Arrays.fill(countersSum, 0.0);
         this.counterInsertion = 0 ;
         this.topKList = new LinkedList<>() ;
         this.lastExpirationTimestamp = 0 ;
@@ -272,7 +284,6 @@ class myCell {
         if ((counterInsertion % (1/this.e)) == 0) {
             System.out.println("-||-> Going to trendMem for level " + this.level + " - " + counterInsertion + " - " + (1/this.e));
             trendMem(sumOfCountersSum);
-            toTrendMem = true ;
         }
 
         // update Trend values if we are in a new p (not as value)
@@ -290,16 +301,20 @@ class myCell {
             }
         }
         else {
-            if (toTrendMem) {
-                topKList.clear();
-                Set<String> keys = hashC.keySet() ;
-                for (String key : keys) {
-                    updateTopKList(new topKNode(key, hashC.get(key).trend));
-                }
-            }
-            else if (hashC.containsKey(keyword)) {
+            if (hashC.containsKey(keyword)) {
                 updateTopKList(new topKNode(keyword, hashC.get(keyword).trend));
             }
+//            if (toTrendMem) {
+//                System.out.println("--> We update the topKList because of trendMem");
+//                topKList.clear();
+//                Set<String> keys = hashC.keySet() ;
+//                for (String key : keys) {
+//                    updateTopKList(new topKNode(key, hashC.get(key).trend));
+//                }
+//            }
+//            else if (hashC.containsKey(keyword)) {
+//                updateTopKList(new topKNode(keyword, hashC.get(keyword).trend));
+//            }
         }
         this.p = p ;
         //this.pExp = p ;
@@ -375,12 +390,14 @@ class myCell {
 
 
     private void trendMem(double sumOfCountersSum) {
+        //boolean ret = false ;
         int counter ;
         Set<String> keys = hashC.keySet() ;
         Iterator<String> it = keys.iterator() ;
+        hashValue temp_hashValue ;
         while (it.hasNext()) {
             String key = it.next() ;
-            hashValue temp_hashValue = hashC.get(key) ;
+            temp_hashValue = hashC.get(key) ;
             counter = 0 ;
             for (int i = 0 ; i < N ; i++) {
                 if (temp_hashValue.countersN[i] < e*sumOfCountersSum) {
@@ -389,10 +406,15 @@ class myCell {
             }
             if (counter == N) {
                 System.out.println("-------------> Because of trendMem remove " + key);
+                for (int i = 0 ; i < N ; i++) {
+                    this.countersSum[i] = this.countersSum[i] - temp_hashValue.countersN[i] ;
+                }
                 it.remove();
+                //ret = true ;
             }
         }
 
+        //return ret ;
     }
 
 

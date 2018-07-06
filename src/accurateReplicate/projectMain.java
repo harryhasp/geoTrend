@@ -3,8 +3,8 @@ package accurateReplicate;
 public class projectMain {
 
     public static void main(String[] args) {
-        String sampleDataFile = "C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\data.txt" ;
-        //String sampleDataFile = "C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\smallData.txt" ;
+        //String sampleDataFile = "C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\data.txt" ;
+        String sampleDataFile = "C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\smallData.txt" ;
         //String newDataFile = "" ;
         int k = 2 ;
         int N = 4 ; // N counters - T/N
@@ -12,9 +12,10 @@ public class projectMain {
         double e = 0.25 ;
 
         myGeoTrend geoTrend = new myGeoTrend(k, N, T, e) ;
+        geoTrend.insertKeywords(sampleDataFile);
 
-        insertKeywordsClass indexShape = new insertKeywordsClass() ;
-        indexShape.insertKeywords(geoTrend, sampleDataFile) ;
+//        insertKeywordsClass indexShape = new insertKeywordsClass() ;
+//        indexShape.insertKeywords(geoTrend, sampleDataFile) ;
     }
 
 }

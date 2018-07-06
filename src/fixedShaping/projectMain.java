@@ -3,7 +3,7 @@ package fixedShaping;
 public class projectMain {
 
     public static void main(String[] args) {
-        //String sampleDataFile = "sampleData.txt" ;
+        //String sampleDataFile = "C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\data.txt" ;
         String sampleDataFile = "C:\\Users\\sir7o\\IdeaProjects\\geoTrend\\src\\smallData.txt" ;
         //String newDataFile = "" ;
         int k = 2 ;
@@ -12,16 +12,13 @@ public class projectMain {
         double e = 0.25 ;
 
         myGeoTrend geoTrend = new myGeoTrend(k, N, T, e) ;
-
-        indexShapingClass indexShape = new indexShapingClass() ;
-        indexShape.insertKeywords(geoTrend, sampleDataFile) ;
+        geoTrend.insertIndexingKeywords(sampleDataFile);
 
         System.out.println();
         System.out.println("--------------------> Finish index creation - Start real data <--------------------");
         System.out.println();
 
-        insertKeywordsClass insertKeywords = new insertKeywordsClass() ;
-        insertKeywords.insertKeywords(geoTrend, sampleDataFile);
+        geoTrend.insertKeywords(sampleDataFile);
     }
 
 }
